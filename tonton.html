@@ -57,17 +57,17 @@
         }
 
         h2 {
-            text-align: left;
+            text-align: left; /* Dialihkan ke pojok kiri sesuai permintaan */
             color: #00e5ff; /* Biru Muda Neon */
             margin: 0;
-            font-size: clamp(16px, 4.5vw, 24px);
+            font-size: clamp(16px, 4.5vw, 24px); /* Mengecil automatik jika terlalu panjang */
             text-transform: uppercase;
             letter-spacing: 1px;
-            flex: 1;
+            flex: 1; /* Mengambil baki ruang yang ada */
             word-break: break-word;
         }
 
-        /* === BUTANG TUKAR MOD (DIATUR DI DALAM HEADER BOX) === */
+        /* === BUTANG TUKAR MOD === */
         .btn-theme {
             background: var(--bg-item);
             border: 1px solid #00e5ff;
@@ -78,7 +78,7 @@
             border-radius: 20px;
             cursor: pointer;
             transition: all 0.2s;
-            white-space: nowrap;
+            white-space: nowrap; /* Mengelakkan teks butang turun ke bawah */
         }
 
         .btn-theme:hover {
@@ -150,7 +150,7 @@
             display: none;
         }
 
-        /* PERBAIKAN TATA LETAK: Area tombol pangkah dibuat rapat dan bersih */
+        /* Pembungkus tombol pangkah di halaman nonton */
         .video-header {
             display: flex;
             align-items: center;
@@ -158,7 +158,7 @@
             min-height: 35px;
         }
 
-        /* PERBAIKAN TATA LETAK: Jarak atas dihancurkan menjadi 0px biar video naik pas ke atas */
+        /* PERBAIKAN: Margin-top diubah ke 0px agar kotak video naik pas ke atas di bawah tombol close */
         .video-box {
             position: relative;
             width: 100%;
@@ -237,7 +237,7 @@
     </div>
 
     <script>
-        // Menggunakan URL spreadsheet tab kedua untuk otomatisasi update data episode
+        // URL CSV Live Spreadsheet Tab Kedua
         const URL_CSV_EPISODES = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRgIbfZERZ-9WhUrdYdNdJ2_8qNsyC0OHNnKt9NSn8m9GVuQhvgMovQOUPtSd_6Fetus0adAxUu6G4O/pub?gid=1389944860&single=true&output=csv";
 
         const urlParams = new URLSearchParams(window.location.search);
@@ -249,7 +249,6 @@
                 return;
             }
 
-            // Memformat judul dari URL parameter secara otomatis
             let kata = kartunID.split('-');
             for (let i = 0; i < kata.length; i++) {
                 if (kata[i].toLowerCase() === 's1' || kata[i].toLowerCase() === 's2' || kata[i].toLowerCase() === 's3') {
@@ -263,7 +262,6 @@
             let namaFormatAsli = kata.join(' ');
             document.getElementById('judul-halaman-list').innerText = namaFormatAsli;
 
-            // Mengambil data dari spreadsheet secara live
             fetch(URL_CSV_EPISODES)
             .then(response => response.text())
             .then(data => {
@@ -272,7 +270,6 @@
             .catch(err => console.error("Gagal memuat data episode: ", err));
         };
 
-        // Otomatisasi pembacaan data spreadsheet untuk playlist view
         function saringDanPaparkanEpisode(text) {
             let baris = text.split("\n");
             let listContainer = document.getElementById('boxSenaraiEpisode');
@@ -294,8 +291,7 @@
                 if(idKartunTab === kartunID) {
                     adaEpisode = true;
                     
-                    // Gunakan gambar thumbnail bawaan default agar instan tanpa loading berputar-putar
-                    let gambarThumbnail = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIThhOGE4YSI+PHBhdGggZD0iTTAgMGg0OHY0OEgweiIgZmlsbD0ibm9uZSIvPjxwYXRoIGQ9Ik0yMSAzaC0xOGMtMS4xIDAtMiAuOS0yIDh2MTJjMCAxLjEuOSAyIDIgMmgxOGMxLjEgMCAyLS45IDItMlY1YzAtMS4xLS45LTItMi0yem0tOSA0YzEuNjYgMCAzIDEuMzQgMyAzcy0xLjM0IDMtMyAzLTMtMS4zNC0zLTMgMS4zNC0zIDMtM3ptNiAxMmgtMTJ2LTEuNmMwLTIgNC0zLjEgNi0zLjFzNiAxLjEgNiAzLjFWMTd6Ii8+PC9zdmc+";
+                    let gambarThumbnail = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIThhOGE4YSI+PHBhdGggZD0iTTAgMGg0OHY0OEgweiIgZmlsbD0ibm9uZSIvPjxwYXRoIGQ9Ik0yMSAzaC0xOGMtMS4xIDAtMiAuOS0yIDh2MTJjMCAxLjEuOSAyIDIgMmgxOGMxLjEgMCAyLS45IDItMlY1YzAtMS4xLS$.5LTItMi0yem0tOSA0YzEuNjYgMCAzIDEuMzQgMyAzcy0xLjM0IDMtMyAzLTMtMS4zNC0zLTMgMS4zNC0zIDMtM3ptNiAxMmgtMTJ2LTEuNmMwLTIgNC0zLjEgNi0zLjFzNiAxLjEgNiAzLjFWMTd6Ii8+PC9zdmc+";
                     
                     if (!linkVideo.includes('drive.google.com') && linkVideo !== "") {
                         gambarThumbnail = `https://img.youtube.com/vi/${linkVideo}/0.jpg`;
@@ -308,6 +304,7 @@
                         bukaVideo(linkVideo, `Episod ${noEpisode}: ${judulEpisode}`);
                     };
 
+                    // Menggunakan struktur item list view asli milikmu secara murni
                     itemDiv.innerHTML = `
                         <img src="${gambarThumbnail}" alt="Thumbnail">
                         <div class="item-content">
@@ -324,7 +321,6 @@
             }
         }
 
-        // KEMBALI MENGGUNAKAN SISTEM GOOGLE DRIVE EMBED YANG LAMA & BENAR
         function bukaVideo(linkVideo, tajukVideo) {
             document.getElementById('halaman-senarai').style.display = 'none';
             document.getElementById('halaman-nonton').style.display = 'block';
