@@ -153,12 +153,10 @@
             display: none;
         }
 
-        /* PERBAIKAN: Kotak video dilebarin dikit ke samping (margin kanan kiri 10px) agar makin enak dilihat */
+        /* PERBAIKAN: Ukuran kotak diperbesar (padding-bottom diubah jadi 70%) agar video lebih gede dan tombol kontrolnya luas */
         .video-box {
             position: relative;
-            margin-left: 10px;
-            margin-right: 10px;
-            width: calc(100% - 20px);
+            width: 100%;
             padding-bottom: 70%; 
             height: 0;
             border: 2px solid #00e5ff;
@@ -166,7 +164,6 @@
             background-color: #000;
             margin-top: 0px; 
             margin-bottom: 10px;
-            box-sizing: border-box;
         }
 
         .video-box iframe {
@@ -182,16 +179,7 @@
             font-size: 16px;
             font-weight: bold;
             color: var(--text-main);
-            margin: 5px 0 0 10px;
-        }
-
-        /* Gaya tulisan Note di bawah judul video */
-        .video-note {
-            font-size: 12px;
-            color: #8a8a8a;
-            margin: 5px 10px 0 10px;
-            line-height: 1.4;
-            font-style: italic;
+            margin: 5px 0 0 0;
         }
 
         /* Butang Kembali Pangkah (✕) */
@@ -244,7 +232,6 @@
                 <iframe id="frame-video" src="" allowfullscreen></iframe>
             </div>
             <p class="video-title" id="tajuk-video"></p>
-            <p class="video-note" id="catatan-video">Note: Jika ingin memperbesar video atau tampilan landscape, silakan aktifkan mode putar otomatis / rotasi layar otomatis pada HP Anda.</p>
         </div>
 
     </div>
@@ -303,7 +290,7 @@
                 let linkVideo = kolom[3].replace(/^"|"$/g, '').trim();
 
                 if(idKartunTab === kartunID) {
-                    let adaEpisode = true;
+                    adaEpisode = true;
                     
                     let gambarThumbnail = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIThhOGE4YSI+PHBhdGggZD0iTTAgMGg0OHY0OEgweiIgZmlsbD0ibm9uZSIvPjxwYXRoIGQ9Ik0yMSAzaC0xOGMtMS4xIDAtMiAuOS0yIDh2MTJjMCAxLjEuOSAyIDIgMmgxOGMxLjEgMCAyLS45IDItMlY1YzAtMS4xLS$.5LTItMi0yem0tOSA0YzEuNjYgMCAzIDEuMzQgMyAzcy0xLjM0IDMtMyAzLTMtMS4zNC0zLTMgMS4zNC0zIDMtM3ptNiAxMmgtMTJ2LTEuNmMwLTIgNC0zLjEgNi0zLjFzNiAxLjEgNiAzLjFWMTd6Ii8+PC9zdmc+";
                     
@@ -339,19 +326,19 @@
             document.getElementById('halaman-nonton').style.display = 'block';
             
             let frameVideo = document.getElementById('frame-video');
-            let linkBarsih = linkVideo.trim();
+            let linkBersih = linkVideo.trim();
             
-            if (linkBarsih.includes('drive.google.com')) {
-                let match = linkBarsih.match(/\/file\/d\/([^\/]+)/);
+            if (linkBersih.includes('drive.google.com')) {
+                let match = linkBersih.match(/\/file\/d\/([^\/]+)/);
                 if (match && match[1]) {
                     frameVideo.src = "https://drive.google.com/file/d/" + match[1] + "/preview";
                 } else {
-                    frameVideo.src = linkBarsih;
+                    frameVideo.src = linkBersih;
                 }
-            } else if (linkBarsih.startsWith('http://') || linkBarsih.startsWith('https://')) {
-                frameVideo.src = linkBarsih;
+            } else if (linkBersih.startsWith('http://') || linkBersih.startsWith('https://')) {
+                frameVideo.src = linkBersih;
             } else {
-                frameVideo.src = "https://www.youtube.com/embed/" + linkBarsih + "?autoplay=1";
+                frameVideo.src = "https://www.youtube.com/embed/" + linkBersih + "?autoplay=1";
             }
             
             document.getElementById('tajuk-video').innerText = tajukVideo;
