@@ -51,20 +51,23 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            gap: 15px;
+            gap: 12px;
             margin-bottom: 25px;
             min-height: 40px;
         }
 
         h2 {
-            text-align: left; /* Dialihkan ke pojok kiri sesuai permintaan */
+            text-align: left;
             color: #00e5ff; /* Biru Muda Neon */
             margin: 0;
-            font-size: clamp(16px, 4.5vw, 24px); /* Mengecil automatik jika terlalu panjang */
+            font-size: clamp(16px, 4.5vw, 24px);
             text-transform: uppercase;
             letter-spacing: 1px;
-            flex: 1; /* Mengambil baki ruang yang ada */
+            flex: 1;
             word-break: break-word;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
         /* === BUTANG TUKAR MOD === */
@@ -78,7 +81,7 @@
             border-radius: 20px;
             cursor: pointer;
             transition: all 0.2s;
-            white-space: nowrap; /* Mengelakkan teks butang turun ke bawah */
+            white-space: nowrap;
         }
 
         .btn-theme:hover {
@@ -150,15 +153,7 @@
             display: none;
         }
 
-        /* Pembungkus tombol pangkah di halaman nonton */
-        .video-header {
-            display: flex;
-            align-items: center;
-            margin-bottom: 15px;
-            min-height: 35px;
-        }
-
-        /* PERBAIKAN: Margin-top diubah ke 0px agar kotak video naik pas ke atas di bawah tombol close */
+        /* PERBAIKAN: Jarak video dinaikkan ke atas agar pas di bawah komponen header */
         .video-box {
             position: relative;
             width: 100%;
@@ -167,8 +162,8 @@
             border: 2px solid #00e5ff;
             border-radius: 8px;
             background-color: #000;
+            margin-top: 5px;
             margin-bottom: 15px;
-            margin-top: 0px; 
         }
 
         .video-box iframe {
@@ -181,27 +176,28 @@
         }
 
         .video-title {
-            font-size: 18px;
+            font-size: 16px;
             font-weight: bold;
             color: var(--text-main);
             margin: 10px 0 0 0;
         }
 
-        /* Butang Kembali Pangkah (✕) */
+        /* Butang Kembali Pangkah (✕) - Diatur bulat rapi di sebelah judul */
         .btn-close {
             background: var(--bg-item);
             border: 1px solid #00e5ff;
             color: #00e5ff;
-            width: 35px;
-            height: 35px;
+            width: 32px;
+            height: 32px;
             border-radius: 50%;
-            font-size: 18px;
+            font-size: 16px;
             font-weight: bold;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
             transition: all 0.2s;
+            flex-shrink: 0;
         }
 
         .btn-close:hover {
@@ -217,15 +213,19 @@
         <div id="halaman-senarai">
             <div class="header-box">
                 <h2 id="judul-halaman-list">Memuatkan...</h2>
-                <button class="btn-theme" id="temaBtn" onclick="tukarTema()">Mod Gelap</button>
+                <button class="btn-theme" id="temaBtn-list" onclick="tukarTema()">Mod Gelap</button>
             </div>
             
             <div class="list-view" id="boxSenaraiEpisode"></div>
         </div>
 
         <div id="halaman-nonton">
-            <div class="video-header">
-                <button class="btn-close" onclick="kembaliKeSenarai()">✕</button>
+            <div class="header-box">
+                <h2>
+                    <button class="btn-close" onclick="kembaliKeSenarai()">✕</button>
+                    <span id="judul-halaman-nonton">Memuatkan...</span>
+                </h2>
+                <button class="btn-theme" id="temaBtn-nonton" onclick="tukarTema()">Mod Gelap</button>
             </div>
             
             <div class="video-box">
@@ -237,7 +237,6 @@
     </div>
 
     <script>
-        // URL CSV Live Spreadsheet Tab Kedua
         const URL_CSV_EPISODES = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRgIbfZERZ-9WhUrdYdNdJ2_8qNsyC0OHNnKt9NSn8m9GVuQhvgMovQOUPtSd_6Fetus0adAxUu6G4O/pub?gid=1389944860&single=true&output=csv";
 
         const urlParams = new URLSearchParams(window.location.search);
@@ -260,7 +259,10 @@
                 }
             }
             let namaFormatAsli = kata.join(' ');
+            
+            // Set judul untuk kedua halaman
             document.getElementById('judul-halaman-list').innerText = namaFormatAsli;
+            document.getElementById('judul-halaman-nonton').innerText = namaFormatAsli;
 
             fetch(URL_CSV_EPISODES)
             .then(response => response.text())
@@ -304,7 +306,6 @@
                         bukaVideo(linkVideo, `Episod ${noEpisode}: ${judulEpisode}`);
                     };
 
-                    // Menggunakan struktur item list view asli milikmu secara murni
                     itemDiv.innerHTML = `
                         <img src="${gambarThumbnail}" alt="Thumbnail">
                         <div class="item-content">
@@ -352,15 +353,14 @@
 
         function tukarTema() {
             var body = document.body;
-            var btn = document.getElementById('temaBtn');
+            var btnList = document.getElementById('temaBtn-list');
+            var btnNonton = document.getElementById('temaBtn-nonton');
             
             body.classList.toggle('dark-mode');
             
-            if(body.classList.contains('dark-mode')) {
-                btn.innerText = "Mod Terang";
-            } else {
-                btn.innerText = "Mod Gelap";
-            }
+            let teksTema = body.classList.contains('dark-mode') ? "Mod Terang" : "Mod Gelap";
+            if(btnList) btnList.innerText = teksTema;
+            if(btnNonton) btnNonton.innerText = teksTema;
         }
     </script>
 </body>
