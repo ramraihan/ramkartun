@@ -34,13 +34,14 @@
             transition: background-color 0.3s, color 0.3s;
         }
 
+        /* PERUBAHAN: max-width kontainer diperbesar dari 500px menjadi 750px agar halaman utama & halaman nonton otomatis lebih lebar ke samping */
         .container {
-            max-width: 650px;
+            max-width: 750px;
             margin: 0 auto;
             background: var(--bg-container);
             border-radius: 12px;
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
-            padding: 20px;
+            padding: 25px;
             border-top: 5px solid #00e5ff; /* Biru Muda Neon */
             position: relative;
             transition: background-color 0.3s;
@@ -96,7 +97,7 @@
             gap: 15px;
         }
 
-        /* Gaya item senarai di halaman utama (Diperlebar & diperbesar) */
+        /* Gaya item senarai */
         .list-item {
             display: flex;
             align-items: center;
@@ -107,8 +108,6 @@
             overflow: hidden;
             transition: all 0.3s ease;
             cursor: pointer;
-            width: 100%;
-            box-sizing: border-box;
         }
 
         /* Kesan apabila item disentuh/hover */
@@ -118,20 +117,18 @@
             transform: scale(1.02);
         }
 
-        /* PERBAIKAN: Gambar Thumbnail di halaman utama diperbesar & diperlebar biar tidak kekecilan */
+        /* PERUBAHAN: Ukuran thumbnail list di halaman utama diperbesar sedikit (150px x 85px) agar lebih proporsional dengan container yang melebar */
         .list-item img {
-            width: 160px;
-            height: 90px;
+            width: 150px;
+            height: 85px;
             object-fit: cover;
             border-right: 3px solid #00e5ff;
-            flex-shrink: 0;
         }
 
         /* Gaya kandungan teks di sebelah kanan */
         .item-content {
             padding: 12px 15px;
             flex: 1;
-            min-width: 0;
         }
 
         .item-title {
@@ -139,8 +136,6 @@
             font-weight: bold;
             color: var(--text-main);
             margin: 0 0 6px 0;
-            white-space: normal;
-            word-break: break-word;
         }
 
         /* Badge kecil untuk penanda episod */
@@ -159,19 +154,17 @@
             display: none;
         }
 
+        /* PERUBAHAN: Ukuran kotak video mengikuti lebar kontainer baru yang sudah diperluas */
         .video-box {
             position: relative;
-            margin-left: 5px;
-            margin-right: 5px;
-            width: calc(100% - 10px);
-            padding-bottom: 56.25%; /* Rasio 16:9 standar video layar lebar */
+            width: 100%;
+            padding-bottom: 56.25%; /* Rasio 16:9 tetap dipertahankan agar video tidak terpotong */
             height: 0;
             border: 2px solid #00e5ff;
             border-radius: 8px;
             background-color: #000;
-            margin-top: 0px; 
+            margin-top: 15px;
             margin-bottom: 10px;
-            box-sizing: border-box;
         }
 
         .video-box iframe {
@@ -194,7 +187,7 @@
         .video-note {
             font-size: 12px;
             color: #8a8a8a;
-            margin: 5px 5px 0 5px;
+            margin: 5px 0 0 5px;
             line-height: 1.4;
             font-style: italic;
         }
