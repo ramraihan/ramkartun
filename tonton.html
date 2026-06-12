@@ -153,7 +153,7 @@
             display: none;
         }
 
-        /* PERBAIKAN: Jarak video dinaikkan ke atas agar pas di bawah komponen header */
+        /* PERBAIKAN TOTAL: Margin atas dibuat 0 dan margin bawah diperkecil agar video naik pas mentok ke atas */
         .video-box {
             position: relative;
             width: 100%;
@@ -162,8 +162,8 @@
             border: 2px solid #00e5ff;
             border-radius: 8px;
             background-color: #000;
-            margin-top: 5px;
-            margin-bottom: 15px;
+            margin-top: 0px; 
+            margin-bottom: 10px;
         }
 
         .video-box iframe {
@@ -179,10 +179,10 @@
             font-size: 16px;
             font-weight: bold;
             color: var(--text-main);
-            margin: 10px 0 0 0;
+            margin: 5px 0 0 0;
         }
 
-        /* Butang Kembali Pangkah (✕) - Diatur bulat rapi di sebelah judul */
+        /* Butang Kembali Pangkah (✕) */
         .btn-close {
             background: var(--bg-item);
             border: 1px solid #00e5ff;
@@ -220,7 +220,7 @@
         </div>
 
         <div id="halaman-nonton">
-            <div class="header-box">
+            <div class="header-box" style="margin-bottom: 15px;">
                 <h2>
                     <button class="btn-close" onclick="kembaliKeSenarai()">✕</button>
                     <span id="judul-halaman-nonton">Memuatkan...</span>
@@ -260,7 +260,6 @@
             }
             let namaFormatAsli = kata.join(' ');
             
-            // Set judul untuk kedua halaman
             document.getElementById('judul-halaman-list').innerText = namaFormatAsli;
             document.getElementById('judul-halaman-nonton').innerText = namaFormatAsli;
 
