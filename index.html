@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Selamat Datang di Nonton Kartun</title>
+    <style>
+        /* === SISTEM TEMA WARNA (DEFAULT: MOD TERANG) === */
+        :root {
+            --bg-body: #f4f4f9;
+            --bg-container: #ffffff;
+            --bg-card: #fafafa;
+            --border-card: #ddd;
+            --text-main: #333333;
+            --text-muted: #666666;
+            --bg-search: #ffffff;
+        }
+
+        /* Mod Gelap khas aplikasi streaming */
+        .dark-mode {
+            --bg-body: #0c111b; 
+            --bg-container: #141a28;
+            --bg-card: #1f273a;
+            --border-card: #28334e;
+            --text-main: #ffffff;
+            --text-muted: #8f98b2;
+            --bg-search: #1f273a;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            margin: 0;
+            padding: 20px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .container {
+            max-width: 950px;
+            margin: 0 auto;
+            background: var(--bg-container);
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            padding: 25px;
+            border-top: 5px solid #00e5ff; 
+            position: relative;
+            transition: background-color 0.3s;
+        }
+
+        .header-box {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            margin-bottom: 30px;
+            border-bottom: 2px solid var(--border-card);
+            padding-bottom: 15px;
+        }
+
+        h2 {
+            text-align: left;
+            color: #00e5ff; 
+            margin: 0;
+            font-size: clamp(16px, 4vw, 24px);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            word-break: break-word;
+            flex: 1;
+        }
+
+        .nav-menu {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .nav-item {
+            text-decoration: none;
+            color: var(--text-main);
+            font-size: 13px;
+            font-weight: bold;
+            padding: 6px 14px;
+            border-radius: 20px;
+            border: 1px solid transparent;
+            transition: all 0.2s;
+            cursor: pointer;
+            background: transparent;
+        }
+
+        .nav-item.active, .nav-item:hover {
+            border-color: #00e5ff;
+            color: #00e5ff;
+            background: var(--bg-card);
+        }
+
+        .search-container {
+            margin-bottom: 25px;
+            width: 100%;
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 12px 20px;
+            font-size: 15px;
+            border: 1px solid var(--border-card);
+            border-radius: 8px;
+            background-color: var(--bg-search);
+            color: var(--text-main);
+            box-sizing: border-box;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .search-box:focus {
+            border-color: #00e5ff;
+            box-shadow: 0 0 8px rgba(0, 229, 255, 0.3);
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr); 
+            gap: 25px 20px; 
+        }
+
+        .movie-item {
+            display: flex;
+            flex-direction: column;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .id-card {
+            width: 100%;
+            padding-top: 100%; /* Membuat rasio card menjadi kotak (1:1) */
+            position: relative;
+            background: var(--bg-card);
+            border: 1px solid var(--border-card);
+            border-radius: 8px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        .id-card img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .movie-item:hover .id-card {
+            border-color: #00e5ff;
+            transform: scale(1.03);
+            box-shadow: 0 10px 20px rgba(0, 229, 255, 0.25);
+        }
+
+        .card-title {
+            font-size: 15px;
+            font-weight: bold;
+            color: var(--text-main);
+            margin: 10px 0 2px 0;
+            line-height: 1.3;
+            transition: color 0.2s;
+        }
+
+        .movie-item:hover .card-title {
+            color: #00e5ff; 
+        }
+
+        .card-type {
+            font-size: 11px;
+            color: var(--text-muted);
+            font-weight: 500;
+            text-transform: uppercase;
+        }
+
+        .btn-theme {
+            background: var(--bg-card);
+            border: 1px solid #00e5ff;
+            color: #00e5ff;
+            padding: 6px 12px;
+            font-size: 11px;
+            font-weight: bold;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .btn-theme:hover {
+            background: #00e5ff;
+            color: #1e1e24;
+        }
+
+        @media (max-width: 768px) {
+            .header-box {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+            .nav-menu {
+                width: 100%;
+                justify-content: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        
+        <div class="header-box">
+            <h2>Selamat Datang di Nonton Kartun</h2>
+            
+            <div class="nav-menu">
+                <button class="nav-item active" onclick="tukarKategori('semua', this)">Semua</button>
+                <button class="nav-item" onclick="tukarKategori('series', this)">Series</button>
+                <button class="nav-item" onclick="tukarKategori('movie', this)">Movie</button>
+                <button class="btn-theme" id="temaBtn" onclick="tukarTema()">Mod Gelap</button>
+            </div>
+        </div>
+
+        <div class="search-container">
+            <input type="text" id="cariKartun" class="search-box" placeholder="Cari nama kartun di sini..." onkeyup="jalankanPenyaringan()">
+        </div>
+        
+        <div class="card-grid" id="gridKartun"></div>
+    </div>
+
+    <script>
+        const URL_CSV_KARTUN = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRgIbfZERZ-9WhUrdYdNdJ2_8qNsyC0OHNnKt9NSn8m9GVuQhvgMovQOUPtSd_6Fetus0adAxUu6G4O/pub?gid=0&single=true&output=csv";
+
+        var kategoriSemasa = "semua";
+
+        window.onload = function() {
+            fetch(URL_CSV_KARTUN)
+            .then(response => response.text())
+            .then(data => {
+                parsedataCSV(data);
+            })
+            .catch(err => console.error("Gagal memuat data Google Sheets: ", err));
+        };
+
+        function parsedataCSV(text) {
+            let baris = text.split("\n");
+            let grid = document.getElementById('gridKartun');
+            grid.innerHTML = ""; 
+
+            for(let i = 1; i < baris.length; i++) {
+                if(baris[i].trim() === "") continue;
+                
+                let kolom = baris[i].split(",");
+                let judul = kolom[0].trim();
+                let tipe = kolom[1].trim().toLowerCase();
+                let gambar = kolom[2].trim();
+                let linkKartun = kolom[3].trim();
+
+                let htmlCard = `
+                    <a href="tonton.html?kartun=${linkKartun}" class="movie-item" data-type="${tipe}">
+                        <div class="id-card">
+                            <img src="${gambar}" alt="${judul}">
+                        </div>
+                        <p class="card-title">${judul}</p>
+                        <span class="card-type">${tipe}</span>
+                    </a>
+                `;
+                grid.innerHTML += htmlCard;
+            }
+        }
+
+        function tukarKategori(kategori, elemenButang) {
+            var butangKategori = document.getElementsByClassName('nav-item');
+            for (var i = 0; i < butangKategori.length; i++) {
+                butangKategori[i].classList.remove('active');
+            }
+            elemenButang.classList.add('active');
+
+            kategoriSemasa = kategori;
+            jalankanPenyaringan();
+        }
+
+        function jalankanPenyaringan() {
+            var input = document.getElementById('cariKartun');
+            var filterCarian = input.value.toLowerCase();
+            var grid = document.getElementById('gridKartun');
+            var items = grid.getElementsByClassName('movie-item');
+
+            for (var i = 0; i < items.length; i++) {
+                var title = items[i].getElementsByClassName('card-title')[0];
+                var tipeKartun = items[i].getAttribute('data-type');
+                
+                var teksCocok = false;
+                var kategoriCocok = false;
+
+                if (title) {
+                    var textValue = title.textContent || title.innerText;
+                    if (textValue.toLowerCase().indexOf(filterCarian) > -1) {
+                        teksCocok = true;
+                    }
+                }
+
+                if (kategoriSemasa === "semua" || tipeKartun === kategoriSemasa) {
+                    kategoriCocok = true;
+                }
+
+                if (teksCocok && kategoriCocok) {
+                    items[i].style.display = "";
+                } else {
+                    items[i].style.display = "none";
+                }
+            }
+        }
+
+        function tukarTema() {
+            var body = document.body;
+            var btn = document.getElementById('temaBtn');
+            body.classList.toggle('dark-mode');
+            btn.innerText = body.classList.contains('dark-mode') ? "Mod Terang" : "Mod Gelap";
+        }
+    </script>
+</body>
+</html>
