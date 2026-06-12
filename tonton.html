@@ -170,15 +170,19 @@
             display: none;
         }
 
+        /* PERBAIKAN: Ditambahkan margin auto dan display block agar container box presisi di tengah */
         .video-container-box {
             background: var(--bg-item);
             border: 1px solid var(--border-item);
             border-radius: 12px;
             padding: 15px;
             box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+            max-width: 100%;
+            margin: 0 auto;
+            box-sizing: border-box;
         }
 
-        /* PERBAIKAN UKURAN AREA VIDEO: Dibuat pas dan presisi mengikuti rasio Google Drive player */
+        /* PERBAIKAN rasiometrik: Menyeimbangkan posisi box video agar pas di tengah */
         .video-box {
             position: relative;
             width: 100%;
@@ -188,6 +192,7 @@
             border-radius: 8px;
             background-color: #000;
             overflow: hidden;
+            margin: 0 auto;
         }
 
         .video-box iframe {
@@ -205,6 +210,7 @@
             color: var(--text-main);
             margin: 15px 0 0 0;
             line-height: 1.4;
+            text-align: left;
         }
     </style>
 </head>
@@ -295,7 +301,6 @@
                 if(idKartunTab === kartunID) {
                     adaEpisode = true;
                     
-                    // Thumbnail bawaan langsung dipasang konstan agar tidak memicu jeda loading 3 detik
                     let gambarThumbnail = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIThhOGE4YSI+PHBhdGggZD0iTTAgMGg0OHY0OEgweiIgZmlsbD0ibm9uZSIvPjxwYXRoIGQ9Ik0yMSAzaC0xOGMtMS4xIDAtMiAuOS0yIDh2MTJjMCAxLjEuOSAyIDIgMmgxOGMxLjEgMCAyLS45IDItMlY1YzAtMS4xLS45LTItMi0yem0tOSA0YzEuNjYgMCAzIDEuMzQgMyAzcy0xLjM0IDMtMyAzLTMtMS4zNC0zLTMgMS4zNC0zIDMtM3ptNiAxMmgtMTJ2LTEuNmMwLTIgNC0zLjEgNi0zLjFzNiAxLjEgNiAzLjFWMTd6Ii8+PC9zdmc+";
                     
                     if (!linkVideo.includes('drive.google.com') && linkVideo !== "") {
@@ -325,7 +330,6 @@
             }
         }
 
-        /* PERBAIKAN LOGIKA: Pembersih tautan otomatis langsung mengeksekusi instan tanpa menunggu 3 detik */
         function bukaVideo(linkVideo, tajukVideo) {
             document.getElementById('halaman-senarai').style.display = 'none';
             document.getElementById('halaman-nonton').style.display = 'block';
