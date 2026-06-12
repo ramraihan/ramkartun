@@ -96,7 +96,7 @@
             gap: 15px;
         }
 
-        /* Gaya item senarai di halaman utama (Diperlebar & diperbesar) */
+        /* Gaya item senarai */
         .list-item {
             display: flex;
             align-items: center;
@@ -107,8 +107,6 @@
             overflow: hidden;
             transition: all 0.3s ease;
             cursor: pointer;
-            width: 100%;
-            box-sizing: border-box;
         }
 
         /* Kesan apabila item disentuh/hover */
@@ -118,20 +116,18 @@
             transform: scale(1.02);
         }
 
-        /* PERBAIKAN: Gambar Thumbnail di halaman utama diperbesar & diperlebar biar tidak kekecilan */
+        /* Gaya thumbnail di sebelah kiri (Ikon Episod) */
         .list-item img {
-            width: 160px;
-            height: 90px;
+            width: 140px;
+            height: 80px;
             object-fit: cover;
             border-right: 3px solid #00e5ff;
-            flex-shrink: 0;
         }
 
         /* Gaya kandungan teks di sebelah kanan */
         .item-content {
             padding: 12px 15px;
             flex: 1;
-            min-width: 0;
         }
 
         .item-title {
@@ -139,8 +135,6 @@
             font-weight: bold;
             color: var(--text-main);
             margin: 0 0 6px 0;
-            white-space: normal;
-            word-break: break-word;
         }
 
         /* Badge kecil untuk penanda episod */
@@ -159,6 +153,7 @@
             display: none;
         }
 
+        /* PERBAIKAN: Ukuran kotak video diperbesar dan dilebarin ke samping biar pas dan puas ditonton */
         .video-box {
             position: relative;
             margin-left: 5px;
@@ -313,7 +308,7 @@
                     let gambarThumbnail = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIThhOGE4YSI+PHBhdGggZD0iTTAgMGg0OHY0OEgweiIgZmlsbD0ibm9uZSIvPjxwYXRoIGQ9Ik0yMSAzaC0xOGMtMS4xIDAtMiAuOS0yIDh2MTJjMCAxLjEuOSAyIDIgMmgxOGMxLjEgMCAyLS45IDItMlY1YzAtMS4xLS$.5LTItMi0yem0tOSA0YzEuNjYgMCAzIDEuMzQgMyAzcy0xLjM0IDMtMyAzLTMtMS4zNC0zLTMgMS4zNC0zIDMtM3ptNiAxMmgtMTJ2LTEuNmMwLTIgNC0zLjEgNi0zLjFzNiAxLjEgNiAzLjFWMTd6Ii8+PC9zdmc+";
                     
                     if (!linkVideo.includes('drive.google.com') && linkVideo !== "") {
-                        gambarThumbnail = linkVideo.startsWith('http') ? linkVideo : `https://img.youtube.com/vi/${linkVideo}/0.jpg`;
+                        gambarThumbnail = `https://img.youtube.com/vi/${linkVideo}/0.jpg`;
                     }
 
                     let itemDiv = document.createElement('div');
