@@ -334,7 +334,6 @@
                     }
                 }
 
-                // Jika judul di sheet utama ketemu, pakai itu. Jika tidak, pakai teks fallback dari parameter URL
                 if(judulDitemukan !== "") {
                     document.getElementById('judul-halaman-list').innerText = judulDitemukan;
                     document.getElementById('judul-halaman-nonton').innerText = judulDitemukan;
@@ -355,7 +354,6 @@
                 }
             })
             .catch(() => {
-                // Fallback jika tab utama gagal dimuat
                 document.getElementById('judul-halaman-list').innerText = kartunID.toUpperCase();
                 document.getElementById('judul-halaman-nonton').innerText = kartunID.toUpperCase();
             });
@@ -372,6 +370,27 @@
             });
         };
 
+        // FUNGSI UTAMA UNTUK PARSING DATA CSV SECARA AMAN DAN TEPAT
+        function parsingBarisCSV(barisTeks) {
+            let hasil = [];
+            let diDalamPetik = false;
+            let kolomSekarang = "";
+
+            for (let i = 0; i < barisTeks.length; i++) {
+                let char = barisTeks[i];
+                if (char === '"') {
+                    diDalamPetik = !diDalamPetik;
+                } else if (char === ',' && !diDalamPetik) {
+                    hasil.push(kolomSekarang.trim().replace(/^"|"$/g, ''));
+                    kolomSekarang = "";
+                } else {
+                    kolomSekarang += char;
+                }
+            }
+            hasil.push(kolomSekarang.trim().replace(/^"|"$/g, '').replace(/\r$|\n$/, ''));
+            return hasil;
+        }
+
         function saringDanPaparkanEpisode(text) {
             let baris = text.split("\n");
             let listContainer = document.getElementById('boxSenaraiEpisode');
@@ -382,23 +401,23 @@
             for(let i = 1; i < baris.length; i++) {
                 if(baris[i].trim() === "") continue;
 
-                // Menggunakan Regex pembagi agar karakter khusus di dalam tanda petik tidak pecah kolom
-                let kolom = baris[i].match(/(".*?"|[^,\r\n]+)(?=\s*,|\s*\r|\s*\n|$)/g);
+                // Memanggil fungsi parsing baru agar Kolom E (kolom terakhir) tidak terlewatkan atau hilang
+                let kolom = parsingBarisCSV(baris[i]);
                 if(!kolom || kolom.length < 4) continue;
 
-                let idKartunTab = kolom[0].replace(/^"|"$/g, '').trim().toLowerCase();
-                let noEpisode = kolom[1].replace(/^"|"$/g, '').trim();
-                let judulEpisode = kolom[2].replace(/^"|"$/g, '').trim();
-                let linkVideo = kolom[3].replace(/^"|"$/g, '').trim();
+                let idKartunTab = kolom[0].trim().toLowerCase();
+                let noEpisode = kolom[1].trim();
+                let judulEpisode = kolom[2].trim();
+                let linkVideo = kolom[3].trim();
                 
-                // Kolom E (Indeks ke-4) adalah nama kolom 'thumbnail_ep' tempat menyimpan link gambar di sheet kamu
-                let linkThumbnailSheet = kolom[4] ? kolom[4].replace(/^"|"$/g, '').trim() : "";
+                // Mengambil link gambar dari Kolom E (Indeks ke-4) secara pasti
+                let linkThumbnailSheet = kolom[4] ? kolom[4].trim() : "";
 
                 if(idKartunTab === kartunID) {
                     adaEpisode = true;
                     
-                    // Gunakan gambar dari kolom E. Jika kosong baru gunakan fallback otomatis youtube
                     let gambarThumbnail = linkThumbnailSheet;
+                    // Jika data kolom E kosong, baru pakai cadangan gambar otomatis Youtube
                     if (gambarThumbnail === "" || gambarThumbnail.toLowerCase() === "undefined") {
                         if (!linkVideo.includes('drive.google.com') && linkVideo !== "") {
                             gambarThumbnail = `https://img.youtube.com/vi/${linkVideo}/0.jpg`;
