@@ -293,7 +293,6 @@
         const urlParams = new URLSearchParams(window.location.search);
         const kartunID = urlParams.get('kartun') ? urlParams.get('kartun').trim().toLowerCase() : "";
 
-        // Fungsi Parser CSV Profesional untuk membaca baris data dengan aman
         function parseBarisCSVAman(text) {
             let p = RegExp(
                 '[^",\\r\\n]+|\"(?:[^"\\\\]|\\\\.)*\"|(?<=,)(?=,)|^(?=,)|(?<=,)$',
@@ -379,17 +378,18 @@
                 let judulEpisode = kolom[2].replace(/^"|"$/g, '').trim();
                 let linkVideo = kolom[3].replace(/^"|"$/g, '').trim();
                 
+                // MEMBERSIHKAN LINK KOLOM E DARI KUTIPAN DAN SPASI TERSEMBUNYI
                 let linkThumbnailSheet = kolom[4] ? kolom[4].replace(/\r/g, "").replace(/^"|"$/g, '').trim() : "";
 
                 if(idKartunTab === kartunID) {
                     adaEpisode = true;
                     let gambarThumbnail = "";
 
-                    // LOGIKA BARU: UTAMAKAN KOLOM E TERLEBIH DAHULU AGAR TIDAK TERTANAM/TERTIMPA LOGIKA DRIVE
+                    // VALIDASI LINK JIKA TERTULIS BENAR DAN BUKAN KATA "UNDEFINED"
                     if (linkThumbnailSheet !== "" && linkThumbnailSheet.toLowerCase() !== "undefined") {
                         gambarThumbnail = linkThumbnailSheet;
                     } 
-                    // JIKA KOLOM E KOSONG, BARULAH CEK OTOMATISASI LINK VIDEO
+                    // CADANGAN JIKA KOLOM E BENAR-BENAR KOSONG
                     else if (linkVideo.includes('drive.google.com')) {
                         let matchDrive = linkVideo.match(/\/file\/d\/([^\/]+)/) || linkVideo.match(/id=([^&]+)/);
                         if (matchDrive && matchDrive[1]) {
