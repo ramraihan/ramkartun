@@ -362,7 +362,6 @@
             for(let i = 1; i < baris.length; i++) {
                 if(baris[i].trim() === "") continue;
 
-                // KEMBALI MENGGUNAKAN SPLIT KOMA STANDAR SAMA SEPERTI HALAMAN UTAMAMU
                 let kolom = baris[i].split(",");
                 if(!kolom || kolom.length < 4) continue;
 
@@ -371,14 +370,18 @@
                 let judulEpisode = kolom[2].replace(/^"|"$/g, '').trim();
                 let linkVideo = kolom[3].replace(/^"|"$/g, '').trim();
                 
-                // Mengambil link gambar dari Kolom E langsung (Indeks nomor 4)
                 let linkThumbnailSheet = kolom[4] ? kolom[4].replace(/^"|"$/g, '').trim().replace(/\r$|\n$/, '') : "";
 
                 if(idKartunTab === kartunID) {
                     adaEpisode = true;
                     
-                    let gambarThumbnail = linkThumbnailSheet;
-                    if (gambarThumbnail === "" || gambarThumbnail.toLowerCase() === "undefined") {
+                    let gambarThumbnail = "";
+
+                    // LOGIKA BARU: JIKA KOLOM E BERISI LINK GAMBAR, LANGSUNG PAKAI LINK ITU DULUAN!
+                    if (linkThumbnailSheet !== "" && linkThumbnailSheet.toLowerCase() !== "undefined") {
+                        gambarThumbnail = linkThumbnailSheet;
+                    } else {
+                        // Jika kolom E kosong baru gunakan cadangan Youtube atau SVG default
                         if (!linkVideo.includes('drive.google.com') && linkVideo !== "") {
                             gambarThumbnail = `https://img.youtube.com/vi/${linkVideo}/0.jpg`;
                         } else {
