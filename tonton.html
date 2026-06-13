@@ -5,23 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Senarai Tontonan Kartun</title>
     <style>
-        /* === SISTEM TEMA WARNA ASLI (DIKUNCI) === */
+        /* === SISTEM TEMA WARNA (DEFAULT: MOD TERANG) === */
         :root {
             --bg-body: #f4f4f9;
             --bg-container: #ffffff;
-            --bg-card: #fafafa;
-            --border-card: #ddd;
+            --bg-item: #fafafa;
+            --border-item: #ddd;
             --text-main: #333333;
-            --text-muted: #666666;
+            --text-title: #ffffff;
         }
 
+        /* Kelas untuk diaktifkan apabila Mod Gelap dipilih */
         .dark-mode {
-            --bg-body: #0c111b; 
-            --bg-container: #141a28;
-            --bg-card: #1f273a;
-            --border-card: #28334e;
+            --bg-body: #1e1e24;
+            --bg-container: #2a2a32;
+            --bg-item: #33333d;
+            --border-item: #444452;
             --text-main: #ffffff;
-            --text-muted: #8f98b2;
+            --text-title: #ffffff;
         }
 
         body {
@@ -34,222 +35,209 @@
         }
 
         .container {
-            max-width: 950px;
+            max-width: 650px;
             margin: 0 auto;
             background: var(--bg-container);
             border-radius: 12px;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-            padding: 25px;
-            border-top: 5px solid #00e5ff; 
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+            padding: 20px;
+            border-top: 5px solid #00e5ff; /* Biru Muda Neon */
+            position: relative;
+            transition: background-color 0.3s;
         }
 
+        /* HEADER BOX: Mengatur ruang judul di kiri dan butang di kanan */
         .header-box {
             display: flex;
             align-items: center;
             justify-content: space-between;
+            gap: 12px;
             margin-bottom: 25px;
-        }
-
-        .title-area {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        /* Tombol Kembali di Pojok Kiri Atas */
-        .btn-kembali {
-            background: #00e5ff;
-            color: #141a28;
-            border: none;
-            padding: 6px 14px;
-            font-size: 14px;
-            font-weight: bold;
-            border-radius: 6px;
-            cursor: pointer;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
+            min-height: 40px;
         }
 
         h2 {
-            color: #00e5ff; 
+            text-align: left;
+            color: #00e5ff; /* Biru Muda Neon */
             margin: 0;
+            font-size: clamp(16px, 4.5vw, 24px);
             text-transform: uppercase;
+            letter-spacing: 1px;
+            flex: 1;
+            word-break: break-word;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
+        /* === BUTANG TUKAR MOD === */
         .btn-theme {
-            background: var(--bg-card);
+            background: var(--bg-item);
             border: 1px solid #00e5ff;
             color: #00e5ff;
             padding: 6px 12px;
-            font-size: 11px;
+            font-size: 12px;
             font-weight: bold;
             border-radius: 20px;
             cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
         }
 
-        /* === UKURAN & KOTAK VIDEO ASLI (MUTLAK TIDAK DIUBAH) === */
-        .video-container {
-            width: 100%;
-            position: relative;
-            margin-bottom: 15px;
-            border-radius: 8px;
-            overflow: hidden;
-            border: 1px solid var(--border-card);
-            display: none; 
+        .btn-theme:hover {
+            background: #00e5ff;
+            color: #1e1e24;
         }
 
-        .video-container iframe {
-            width: 100%;
-            height: 450px;
-            border: none;
+        /* Struktur List View */
+        .list-view {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
         }
 
-        .close-video {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            background: rgba(255, 255, 255, 0.9);
-            border: none;
-            border-radius: 50%;
-            width: 30px;
-            height: 30px;
-            cursor: pointer;
-            font-weight: bold;
-            color: #ff0000;
-            z-index: 10;
+        /* Gaya item senarai */
+        .list-item {
             display: flex;
             align-items: center;
-            justify-content: center;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+            text-decoration: none;
+            background: var(--bg-item);
+            border: 1px solid var(--border-item);
+            border-radius: 8px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        /* Kesan apabila item disentuh/hover */
+        .list-item:hover {
+            background: var(--border-item);
+            border-color: #00e5ff;
+            transform: scale(1.02);
+        }
+
+        /* Gaya thumbnail di sebelah kiri (Ikon Episod) */
+        .list-item img {
+            width: 140px;
+            height: 80px;
+            object-fit: cover;
+            border-right: 3px solid #00e5ff;
+        }
+
+        /* Gaya kandungan teks di sebelah kanan */
+        .item-content {
+            padding: 12px 15px;
+            flex: 1;
+        }
+
+        .item-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: var(--text-main);
+            margin: 0 0 6px 0;
+        }
+
+        /* Badge kecil untuk penanda episod */
+        .episode-badge {
+            display: inline-block;
+            font-size: 11px;
+            background-color: #00e5ff;
+            color: #1e1e24;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+
+        /* === HALAMAN NONTON === */
+        #halaman-nonton {
+            display: none;
+        }
+
+        /* PERBAIKAN: Ukuran kotak diperbesar (padding-bottom diubah jadi 70%) agar video lebih gede dan tombol kontrolnya luas */
+        .video-box {
+            position: relative;
+            width: 100%;
+            padding-bottom: 70%; 
+            height: 0;
+            border: 2px solid #00e5ff;
+            border-radius: 8px;
+            background-color: #000;
+            margin-top: 0px; 
+            margin-bottom: 10px;
+        }
+
+        .video-box iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
         }
 
         .video-title {
-            font-size: 18px;
+            font-size: 16px;
             font-weight: bold;
-            margin-top: 10px;
-            margin-bottom: 5px;
-            display: none;
+            color: var(--text-main);
+            margin: 5px 0 0 0;
         }
 
-        /* Note Keterangan Tepat di Bawah Judul Video saat Diputar */
+        /* CSS TAMBAHAN UNTUK NOTE & QRIS (Hanya ditaruh di bawah video) */
         .video-note {
-            font-size: 14px;
-            color: var(--text-muted);
-            margin-top: 5px;
+            font-size: 13px;
+            color: #666666;
+            margin-top: 8px;
             margin-bottom: 15px;
-            display: none;
             padding: 8px 12px;
-            background: var(--bg-card);
+            background: var(--bg-item);
             border-left: 3px solid #00e5ff;
             border-radius: 4px;
         }
+        .dark-mode .video-note {
+            color: #8f98b2;
+        }
 
-        /* Gambar QRIS Donasi Tepat di Bawah Player Halaman Video */
         .donation-box {
-            display: none;
             text-align: center;
             padding: 15px;
-            margin-top: 25px;
-            border-top: 1px dashed var(--border-card);
+            margin-top: 20px;
+            border-top: 1px dashed var(--border-item);
         }
 
         .donation-title {
             font-size: 14px;
             font-weight: bold;
             margin-bottom: 10px;
-        }
-
-        .donation-qr {
-            max-width: 200px;
-            border-radius: 8px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-        }
-
-        /* === LIST VIEW DAFTAR EPISODE ASLI === */
-        .list-container {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            margin-top: 20px;
-        }
-
-        .episode-item {
-            display: flex;
-            align-items: center;
-            background: var(--bg-card);
-            border: 1px solid var(--border-card);
-            border-radius: 8px;
-            padding: 12px;
-            cursor: pointer;
-            transition: all 0.2s;
-            text-decoration: none;
             color: var(--text-main);
         }
 
-        .episode-item:hover {
-            border-color: #00e5ff;
+        .donation-qr {
+            max-width: 160px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
         }
 
-        /* Tempat Thumbnail Gambar di Samping Kiri Judul */
-        .episode-thumbnail {
-            width: 120px;
-            height: 70px;
-            background: #ccc;
-            border-radius: 6px;
-            margin-right: 15px;
-            flex-shrink: 0;
-            overflow: hidden;
+        /* Butang Kembali Pangkah (✕) */
+        .btn-close {
+            background: var(--bg-item);
+            border: 1px solid #00e5ff;
+            color: #00e5ff;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            border-right: 3px solid #00e5ff;
+            transition: all 0.2s;
+            flex-shrink: 0;
         }
 
-        .episode-thumbnail img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .episode-info {
-            flex: 1;
-        }
-
-        .episode-title {
-            font-size: 15px;
-            font-weight: bold;
-            margin: 0 0 5px 0;
-        }
-
-        .episode-badge {
-            display: inline-block;
+        .btn-close:hover {
             background: #00e5ff;
-            color: #141a28;
-            font-size: 11px;
-            font-weight: bold;
-            padding: 2px 8px;
-            border-radius: 4px;
-        }
-
-        .pesan-kosong {
-            text-align: center;
-            padding: 30px;
-            font-size: 16px;
-            color: var(--text-muted);
-        }
-
-        @media (max-width: 768px) {
-            .video-container iframe {
-                height: 220px;
-            }
-            .episode-thumbnail {
-                width: 90px;
-                height: 55px;
-            }
-            .episode-title {
-                font-size: 13px;
-            }
+            color: #1e1e24;
         }
     </style>
 </head>
@@ -257,174 +245,171 @@
 
     <div class="container">
         
-        <div class="header-box">
-            <div class="title-area">
-                <a href="index.html" class="btn-kembali">← Kembali</a>
-                <h2 id="namaKartun">Loading...</h2>
+        <div id="halaman-senarai">
+            <div class="header-box">
+                <h2 id="judul-halaman-list">Memuatkan...</h2>
+                <button class="btn-theme" id="temaBtn-list" onclick="tukarTema()">Mod Gelap</button>
             </div>
-            <button class="btn-theme" onclick="tukarTema()">Mod Gelap</button>
+            
+            <div class="list-view" id="boxSenaraiEpisode"></div>
         </div>
 
-        <div class="video-container" id="playerContainer">
-            <button class="close-video" onclick="tutupVideo()">X</button>
-            <iframe id="videoPlayer" src="" allowfullscreen></iframe>
-        </div>
-        
-        <div class="video-title" id="judulTayangan"></div>
+        <div id="halaman-nonton">
+            <div class="header-box" style="margin-bottom: 15px;">
+                <h2>
+                    <button class="btn-close" onclick="kembaliKeSenarai()">✕</button>
+                    <span id="judul-halaman-nonton">Memuatkan...</span>
+                </h2>
+                <button class="btn-theme" id="temaBtn-nonton" onclick="tukarTema()">Mod Gelap</button>
+            </div>
+            
+            <div class="video-box">
+                <iframe id="frame-video" src="" allowfullscreen></iframe>
+            </div>
+            <p class="video-title" id="tajuk-video"></p>
 
-        <div class="video-note" id="noteTayangan">Note: Kalau mau layar penuh bisa landscape. Aktifkan mode putar otomatis atau rotasi otomatis layar HP.</div>
-        
-        <div class="donation-box" id="qrisDonasi">
-            <div class="donation-title">Dukung Nonton Kartun via QRIS Donasi</div>
-            <img src="https://via.placeholder.com/200x250?text=QRIS+DONASI" alt="QRIS Donasi" class="donation-qr">
-        </div>
+            <div class="video-note">Note: Kalau mau layar penuh bisa landscape. Aktifkan mode putar otomatis atau rotasi otomatis layar HP.</div>
 
-        <div class="list-container" id="senaraiEpisod"></div>
+            <div class="donation-box">
+                <div class="donation-title">Dukung Nonton Kartun via QRIS Donasi</div>
+                <img src="https://via.placeholder.com/160x200?text=QRIS+DONASI" alt="QRIS Donasi" class="donation-qr">
+            </div>
+        </div>
 
     </div>
 
     <script>
-        const params = new URLSearchParams(window.location.search);
-        const KEY_KARTUN = params.get('kartun') ? params.get('kartun').trim().toLowerCase() : "";
+        // PERBAIKAN: Mengganti GID lembaran yang salah (1389944860) menjadi GID asli milikmu (1868354275)
+        const URL_CSV_EPISODES = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRgIbfZERZ-9WhUrdYdNdJ2_8qNsyC0OHNnKt9NSn8m9GVuQhvgMovQOUPtSd_6Fetus0adAxUu6G4O/pub?gid=1868354275&single=true&output=csv";
 
-        const SHEET_KARTUN_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRgIbfZERZ-9WhUrdYdNdJ2_8qNsyC0OHNnKt9NSn8m9GVuQhvgMovQOUPtSd_6Fetus0adAxUu6G4O/pub?gid=0&single=true&output=csv";
-        const SHEET_EPISODES_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRgIbfZERZ-9WhUrdYdNdJ2_8qNsyC0OHNnKt9NSn8m9GVuQhvgMovQOUPtSd_6Fetus0adAxUu6G4O/pub?gid=1868354275&single=true&output=csv";
-
-        // Fungsi Pintar membaca baris CSV agar tidak pecah karena koma di dalam link/judul
-        function parsingBarisCSV(teksBaris) {
-            let hasil = [];
-            let diDalamKutip = false;
-            let nilaiKolom = "";
-            
-            for (let i = 0; i < teksBaris.length; i++) {
-                let char = teksBaris[i];
-                if (char === '"' || char === "'") {
-                    diDalamKutip = !diDalamKutip;
-                } else if (char === ',' && !diInsideKutip) {
-                    hasil.push(nilaiKolom.trim());
-                    nilaiKolom = "";
-                } else {
-                    nilaiKolom += char;
-                }
-            }
-            hasil.push(nilaiKolom.trim());
-            return hasil;
-        }
+        const urlParams = new URLSearchParams(window.location.search);
+        const kartunID = urlParams.get('kartun');
 
         window.onload = function() {
-            if(!KEY_KARTUN) {
-                document.getElementById('namaKartun').innerText = "KARTUN TIDAK DITEMUI";
-                document.getElementById('senaraiEpisod').innerHTML = "<div class='pesan-kosong'>Parameter rujukan tidak sah.</div>";
+            if(!kartunID) {
+                document.getElementById('judul-halaman-list').innerText = "Kartun Tidak Ditemui";
                 return;
             }
-            
-            fetch(SHEET_KARTUN_URL)
-            .then(res => res.text())
-            .then(dataKartun => {
-                let barisK = dataKartun.split(/\r?\n/);
-                let namaKartunSebenar = "";
-                
-                for(let i=1; i<barisK.length; i++) {
-                    if(barisK[i].trim() === "") continue;
-                    let kol = parsingBarisCSV(barisK[i]);
-                    if(kol.length >= 4 && kol[3].toLowerCase() === KEY_KARTUN) {
-                        namaKartunSebenar = kol[0];
-                        break;
-                    }
-                }
-                
-                if(namaKartunSebenar !== "") {
-                    document.getElementById('namaKartun').innerText = namaKartunSebenar.toUpperCase();
-                    muatTurunEpisodes();
-                } else {
-                    // Jika rujukan URL berbeda nama, kita paksa ambil teks judul dari parameter URL sebagai penyelamat
-                    let namaFallback = KEY_KARTUN.replace(/-/g, " ");
-                    document.getElementById('namaKartun').innerText = namaFallback.toUpperCase();
-                    muatTurunEpisodes();
-                }
-            });
-        };
 
-        function muatTurunEpisodes() {
-            fetch(SHEET_EPISODES_URL)
+            let kata = kartunID.split('-');
+            for (let i = 0; i < kata.length; i++) {
+                if (kata[i].toLowerCase() === 's1' || kata[i].toLowerCase() === 's2' || kata[i].toLowerCase() === 's3') {
+                    kata[i] = "Season " + kata[i].substring(1);
+                } else if (kata[i].toLowerCase() === 'm1' || kata[i].toLowerCase() === 'm2') {
+                    kata[i] = "Musim " + kata[i].substring(1);
+                } else {
+                    kata[i] = kata[i].charAt(0).toUpperCase() + kata[i].slice(1);
+                }
+            }
+            let namaFormatAsli = kata.join(' ');
+            
+            document.getElementById('judul-halaman-list').innerText = namaFormatAsli;
+            document.getElementById('judul-halaman-nonton').innerText = namaFormatAsli;
+
+            fetch(URL_CSV_EPISODES)
             .then(response => response.text())
             .then(data => {
-                let baris = data.split(/\r?\n/);
-                let senaraiBox = document.getElementById('senaraiEpisod');
-                senaraiBox.innerHTML = "";
-                let adaEpisod = false;
+                saringDanPaparkanEpisode(data);
+            })
+            .catch(err => console.error("Gagal memuat data episode: ", err));
+        };
 
-                for(let i = 1; i < baris.length; i++) {
-                    if(baris[i].trim() === "") continue;
+        function saringDanPaparkanEpisode(text) {
+            let baris = text.split("\n");
+            let listContainer = document.getElementById('boxSenaraiEpisode');
+            listContainer.innerHTML = ""; 
 
-                    let kolom = parsingBarisCSV(baris[i]);
-                    if(kolom.length < 4) continue;
+            let adaEpisode = false;
 
-                    let idKartun = kolom[0].toLowerCase();
+            for(let i = 1; i < baris.length; i++) {
+                if(baris[i].trim() === "") continue;
 
-                    // Pencocokan fleksibel agar boboiboy-s1 atau boboiboy-season-1 tetap lolos terbaca
-                    if(idKartun === KEY_KARTUN || KEY_KARTUN.includes(idKartun) || idKartun.includes(KEY_KARTUN)) {
-                        adaEpisod = true;
-                        let epJudul = kolom[2];
-                        let epLink = kolom[3];
-                        let epThumb = kolom[4] ? kolom[4] : ""; 
+                let kolom = baris[i].match(/(".*?"|[^,\r\n]+)(?=\s*,|\s*\r|\s*\n|$)/g);
+                if(!kolom || kolom.length < 4) continue;
 
-                        let htmlItem = `
-                            <div class="episode-item" onclick="mainkanVideo('${epLink}', '${epJudul}')">
-                                <div class="episode-thumbnail">
-                                    ${epThumb !== "" ? `<img src="${epThumb}" alt="${epJudul}">` : `<div style='color:var(--text-muted); font-size:11px;'>No Image</div>`}
-                                </div>
-                                <div class="episode-info">
-                                    <p class="episode-title">${epJudul}</p>
-                                    <span class="episode-badge">Episod</span>
-                                </div>
-                            </div>
-                        `;
-                        senaraiBox.innerHTML += htmlItem;
+                let idKartunTab = kolom[0].replace(/^"|"$/g, '').trim();
+                let noEpisode = kolom[1].replace(/^"|"$/g, '').trim();
+                let judulEpisode = kolom[2].replace(/^"|"$/g, '').trim();
+                let linkVideo = kolom[3].replace(/^"|"$/g, '').trim();
+                
+                // TAMBAHAN: Mengambil data link thumbnail dari Kolom E (kolom nomor indeks ke-4)
+                let linkThumbnailSheet = kolom[4] ? kolom[4].replace(/^"|"$/g, '').trim() : "";
+
+                if(idKartunTab === kartunID) {
+                    adaEpisode = true;
+                    
+                    // DEFAULT TAMBAHAN: Jika di sheet kolom E kosong, baru pakai cadangan gambar otomatis
+                    let gambarThumbnail = linkThumbnailSheet;
+                    if (gambarThumbnail === "") {
+                        if (!linkVideo.includes('drive.google.com') && linkVideo !== "") {
+                            gambarThumbnail = `https://img.youtube.com/vi/${linkVideo}/0.jpg`;
+                        } else {
+                            gambarThumbnail = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIThhOGE4YSI+PHBhdGggZD0iTTAgMGg0OHY0OEgweiIgZmlsbD0ibm9uZSIvPjxwYXRoIGQ9Ik0yMSAzaC0xOGMtMS4xIDAtMiAuOS0yIDh2MTJjMCAxLjEuOSAyIDIgMmgxOGMxLjEgMCAyLS45IDItMlY1YzAtMS4xLS$.5LTItMi0yem0tOSA0YzEuNjYgMCAzIDEuMzQgMyAzcy0xLjM0IDMtMyAzLTMtMS4zNC0zLTMgMS4zNC0zIDMtM3ptNiAxMmgtMTJ2LTEuNmMwLTIgNC0zLjEgNi0zLjFzNiAxLjEgNiAzLjFWMTd6Ii8+PC9zdmc+";
+                        }
                     }
-                }
 
-                if(!adaEpisod) {
-                    senaraiBox.innerHTML = "<div class='pesan-kosong'>Belum ada episod untuk kartun ini. Semak rujukan nama pautan pada Google Sheets.</div>";
+                    let itemDiv = document.createElement('div');
+                    itemDiv.className = 'list-item';
+                    
+                    itemDiv.onclick = function() {
+                        bukaVideo(linkVideo, `Episod ${noEpisode}: ${judulEpisode}`);
+                    };
+
+                    itemDiv.innerHTML = `
+                        <img src="${gambarThumbnail}" alt="Thumbnail">
+                        <div class="item-content">
+                            <p class="item-title">Episod ${noEpisode}: ${judulEpisode}</p>
+                            <span class="episode-badge">Episod ${noEpisode}</span>
+                        </div>
+                    `;
+                    listContainer.appendChild(itemDiv);
                 }
-            });
+            }
+
+            if(!adaEpisode) {
+                listContainer.innerHTML = "<p style='text-align:center; color:var(--text-muted);'>Belum ada episod untuk kartun ini.</p>";
+            }
         }
 
-        function mainkanVideo(link, judul) {
-            let playerContainer = document.getElementById('playerContainer');
-            let videoPlayer = document.getElementById('videoPlayer');
-            let judulTayangan = document.getElementById('judulTayangan');
-            let noteTayangan = document.getElementById('noteTayangan');
-            let qrisDonasi = document.getElementById('qrisDonasi');
-
-            videoPlayer.src = link;
-            playerContainer.style.display = "block";
+        function bukaVideo(linkVideo, tajukVideo) {
+            document.getElementById('halaman-senarai').style.display = 'none';
+            document.getElementById('halaman-nonton').style.display = 'block';
             
-            judulTayangan.innerText = judul;
-            judulTayangan.style.display = "block";
-
-            noteTayangan.style.display = "block";
-            qrisDonasi.style.display = "block";
-
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            let frameVideo = document.getElementById('frame-video');
+            let linkBersih = linkVideo.trim();
+            
+            if (linkBersih.includes('drive.google.com')) {
+                let match = linkBersih.match(/\/file\/d\/([^\/]+)/);
+                if (match && match[1]) {
+                    frameVideo.src = "https://drive.google.com/file/d/" + match[1] + "/preview";
+                } else {
+                    frameVideo.src = linkBersih;
+                }
+            } else if (linkBersih.startsWith('http://') || linkBersih.startsWith('https://')) {
+                frameVideo.src = linkBersih;
+            } else {
+                frameVideo.src = "https://www.youtube.com/embed/" + linkBersih + "?autoplay=1";
+            }
+            
+            document.getElementById('tajuk-video').innerText = tajukVideo;
         }
 
-        function tutupVideo() {
-            let playerContainer = document.getElementById('playerContainer');
-            let videoPlayer = document.getElementById('videoPlayer');
-            let judulTayangan = document.getElementById('judulTayangan');
-            let noteTayangan = document.getElementById('noteTayangan');
-            let qrisDonasi = document.getElementById('qrisDonasi');
-
-            videoPlayer.src = "";
-            playerContainer.style.display = "none";
-            judulTayangan.style.display = "none";
-            noteTayangan.style.display = "none";
-            qrisDonasi.style.display = "none";
+        function kembaliKeSenarai() {
+            document.getElementById('halaman-senarai').style.display = 'block';
+            document.getElementById('halaman-nonton').style.display = 'none';
+            document.getElementById('frame-video').src = "";
         }
 
         function tukarTema() {
-            document.body.classList.toggle('dark-mode');
+            var body = document.body;
+            var btnList = document.getElementById('temaBtn-list');
+            var btnNonton = document.getElementById('temaBtn-nonton');
+            
+            body.classList.toggle('dark-mode');
+            
+            let teksTema = body.classList.contains('dark-mode') ? "Mod Terang" : "Mod Gelap";
+            if(btnList) btnList.innerText = teksTema;
+            if(btnNonton) btnNonton.innerText = teksTema;
         }
     </script>
 </body>
