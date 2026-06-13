@@ -353,7 +353,8 @@
         };
 
         function saringDanPaparkanEpisode(text) {
-            let baris = text.split("\n");
+            // Memisahkan baris dengan aman terlepas dari format sistem operasi (\r\n atau \n)
+            let baris = text.replace(/\r/g, "").split("\n");
             let listContainer = document.getElementById('boxSenaraiEpisode');
             listContainer.innerHTML = ""; 
 
@@ -370,18 +371,17 @@
                 let judulEpisode = kolom[2].replace(/^"|"$/g, '').trim();
                 let linkVideo = kolom[3].replace(/^"|"$/g, '').trim();
                 
-                let linkThumbnailSheet = kolom[4] ? kolom[4].replace(/^"|"$/g, '').trim().replace(/\r$|\n$/, '') : "";
+                // MEMBERSIHKAN LINK GAMBAR DARI SEGALA KARAKTER FORMAT DATA SPREADSHEET YANG COBA MENYELUP
+                let linkThumbnailSheet = kolom[4] ? kolom[4].replace(/^"|"$/g, '').trim() : "";
 
                 if(idKartunTab === kartunID) {
                     adaEpisode = true;
                     
                     let gambarThumbnail = "";
 
-                    // LOGIKA BARU: JIKA KOLOM E BERISI LINK GAMBAR, LANGSUNG PAKAI LINK ITU DULUAN!
                     if (linkThumbnailSheet !== "" && linkThumbnailSheet.toLowerCase() !== "undefined") {
                         gambarThumbnail = linkThumbnailSheet;
                     } else {
-                        // Jika kolom E kosong baru gunakan cadangan Youtube atau SVG default
                         if (!linkVideo.includes('drive.google.com') && linkVideo !== "") {
                             gambarThumbnail = `https://img.youtube.com/vi/${linkVideo}/0.jpg`;
                         } else {
