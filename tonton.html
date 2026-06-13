@@ -352,8 +352,28 @@
             });
         };
 
+        // Fungsi Parser CSV Khusus agar tanda koma di dalam Judul tidak mengacaukan pembacaan Kolom E (Indeks 4)
+        function pecahBarisCSV(teksBaris) {
+            let hasil = [];
+            let dalamKutipan = false;
+            let isiKolom = "";
+            
+            for (let i = 0; i < teksBaris.length; i++) {
+                let karakter = teksBaris[i];
+                if (karakter === '"') {
+                    dalamKutipan = !dalamKutipan;
+                } else if (karakter === ',' && !dalamKutipan) {
+                    hasil.push(isiKolom);
+                    isiKolom = "";
+                } else {
+                    isiKolom += karakter;
+                }
+            }
+            hasil.push(isiKolom);
+            return hasil;
+        }
+
         function saringDanPaparkanEpisode(text) {
-            // Memisahkan baris berdasarkan ganti baris secara aman
             let baris = text.split("\n");
             let listContainer = document.getElementById('boxSenaraiEpisode');
             listContainer.innerHTML = ""; 
@@ -363,7 +383,8 @@
             for(let i = 1; i < baris.length; i++) {
                 if(baris[i].trim() === "") continue;
 
-                let kolom = baris[i].split(",");
+                // Menggunakan fungsi pemisah berbasis pengaman kutipan koma
+                let kolom = pecahBarisCSV(baris[i]);
                 if(!kolom || kolom.length < 4) continue;
 
                 let idKartunTab = kolom[0].replace(/^"|"$/g, '').trim().toLowerCase();
@@ -371,14 +392,15 @@
                 let judulEpisode = kolom[2].replace(/^"|"$/g, '').trim();
                 let linkVideo = kolom[3].replace(/^"|"$/g, '').trim();
                 
-                // BERSIHKAN TOTAL KARAKTER '\r' YANG MENEMPEL DI UJUNG LINK THUMBNAIL (KOLOM E)
+                // KOLOM E ADALAH INDEKS KE-4 (Kolom ke-5 di Google Sheet)
                 let linkThumbnailSheet = kolom[4] ? kolom[4].replace(/\r/g, "").replace(/^"|"$/g, '').trim() : "";
 
                 if(idKartunTab === kartunID) {
                     adaEpisode = true;
                     let gambarThumbnail = "";
 
-                    if (linkThumbnailSheet !== "" && linkThumbnailSheet.toLowerCase() !== "undefined") {
+                    // Validasi link gambar Kolom E agar jika ada isinya langsung dipaksakan tampil tanpa fallback rusak
+                    if (linkThumbnailSheet !== "" && linkThumbnailSheet.toLowerCase() !== "undefined" && linkThumbnailSheet.startsWith("http")) {
                         gambarThumbnail = linkThumbnailSheet;
                     } else {
                         if (!linkVideo.includes('drive.google.com') && linkVideo !== "") {
