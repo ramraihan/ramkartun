@@ -293,6 +293,15 @@
         const urlParams = new URLSearchParams(window.location.search);
         const kartunID = urlParams.get('kartun') ? urlParams.get('kartun').trim().toLowerCase() : "";
 
+        // Fungsi Parser CSV Kelas Berat (Regex) - Mengamankan simbol &, spasi, koma, dan kutip dari Google Sheet
+        function parseBarisCSVAman(text) {
+            let p = RegExp(
+                '[^",\\r\\n]+|\"(?:[^"\\\\]|\\\\.)*\"|(?<=,)(?=,)|^(?=,)|(?<=,)$',
+                'g'
+            );
+            return text.match(p) || [];
+        }
+
         window.onload = function() {
             if(!kartunID) {
                 document.getElementById('judul-halaman-list').innerText = "KARTUN TIDAK DITEMUI";
@@ -307,7 +316,7 @@
                 
                 for(let i = 1; i < barisKartun.length; i++) {
                     if(barisKartun[i].trim() === "") continue;
-                    let kol = barisKartun[i].split(",");
+                    let kol = parseBarisCSVAman(barisKartun[i]);
                     if(kol.length >= 4) {
                         let linkKartunSheet = kol[3].replace(/^"|"$/g, '').trim().toLowerCase();
                         if(linkKartunSheet === kartunID) {
@@ -362,8 +371,8 @@
             for(let i = 1; i < baris.length; i++) {
                 if(baris[i].trim() === "") continue;
 
-                // Menggunakan split standar agar link gambar utuh tidak terpotong logika parser lama
-                let kolom = baris[i].split(",");
+                // Menggunakan parser aman anti-error
+                let kolom = parseBarisCSVAman(baris[i]);
                 if(!kolom || kolom.length < 4) continue;
 
                 let idKartunTab = kolom[0].replace(/^"|"$/g, '').trim().toLowerCase();
@@ -371,18 +380,16 @@
                 let judulEpisode = kolom[2].replace(/^"|"$/g, '').trim();
                 let linkVideo = kolom[3].replace(/^"|"$/g, '').trim();
                 
-                // Ambil link gambar murni dari Kolom E dan bersihkan dari tanda kutip serta sisa karakter spasial
+                // Mengambil link thumbnail murni tanpa gangguan sisa spasi atau karakter kutip ganda
                 let linkThumbnailSheet = kolom[4] ? kolom[4].replace(/\r/g, "").replace(/^"|"$/g, '').trim() : "";
 
                 if(idKartunTab === kartunID) {
                     adaEpisode = true;
                     let gambarThumbnail = "";
 
-                    // Jika Kolom E berisi link gambar valid, pasang langsung ke thumbnail
                     if (linkThumbnailSheet !== "" && linkThumbnailSheet.toLowerCase() !== "undefined") {
                         gambarThumbnail = linkThumbnailSheet;
                     } else {
-                        // Fallback otomatis jika kolom E dikosongkan
                         if (!linkVideo.includes('drive.google.com') && linkVideo !== "") {
                             gambarThumbnail = `https://img.youtube.com/vi/${linkVideo}/0.jpg`;
                         } else {
