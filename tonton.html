@@ -385,12 +385,21 @@
                     adaEpisode = true;
                     let gambarThumbnail = "";
 
-                    // MENGAMBIL LINK MANUAL DARI KOLOM E SPREADSHEET
+                    // VALIDASI LINK MANUAL DI SPREADSHEET
                     if (linkThumbnailSheet !== "" && linkThumbnailSheet.toLowerCase() !== "undefined") {
                         gambarThumbnail = linkThumbnailSheet;
                     } else {
-                        // Fallback otomatis jika kolom E kosong (Hanya bekerja maksimal jika link dari Youtube)
-                        if (!linkVideo.includes('drive.google.com') && linkVideo !== "") {
+                        // OTOMATIS GENERATE FORMAT TERBARU DARI LINK GOOGLE DRIVE
+                        if (linkVideo.includes('drive.google.com')) {
+                            let matchDrive = linkVideo.match(/\/file\/d\/([^\/]+)/) || linkVideo.match(/id=([^&]+)/);
+                            if (matchDrive && matchDrive[1]) {
+                                gambarThumbnail = "https://lh3.googleusercontent.com/u/0/d/" + matchDrive[1];
+                            } else {
+                                gambarThumbnail = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIThhOGE4YSI+PHBhdGggZD0iTTAgMGg0OHY0OEgweiIgZmlsbD0ibm9uZSIvPjxwYXRoIGQ9Ik0yMSAzaC0xOGMtMS4xIDAtMiAuOS0yIDh2MTJjMCAxLjEuOSAyIDIgMmgxOGMxLjEgMCAyLS45IDItMlY1YzAtMS4xLS45LTItMi0yeG0tOSA0YzEuNjYgMCAzIDEuMzQgMyAzcy0xLjM0IDMtMyAzLTMtMS4zNC0zLTMgMS4zNC0zIDMtM3ptNiAxMmgtMTJ2LTEuNmMwLTIgNC0zLjEgNi0zLjFzNiAxLjEgNiAzLjFWMTd6Ii8+PC9zdmc+";
+                            }
+                        } 
+                        // OTOMATIS GENERATE DARI YOUTUBE JIKA BUKAN LINK DRIVE
+                        else if (linkVideo !== "") {
                             gambarThumbnail = `https://img.youtube.com/vi/${linkVideo}/0.jpg`;
                         } else {
                             gambarThumbnail = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIThhOGE4YSI+PHBhdGggZD0iTTAgMGg0OHY0OEgweiIgZmlsbD0ibm9uZSIvPjxwYXRoIGQ9Ik0yMSAzaC0xOGMtMS4xIDAtMiAuOS0yIDh2MTJjMCAxLjEuOSAyIDIgMmgxOGMxLjEgMCAyLS45IDItMlY1YzAtMS4xLS45LTItMi0yeG0tOSA0YzEuNjYgMCAzIDEuMzQgMyAzcy0xLjM0IDMtMyAzLTMtMS4zNC0zLTMgMS4zNC0zIDMtM3ptNiAxMmgtMTJ2LTEuNmMwLTIgNC0zLjEgNi0zLjFzNiAxLjEgNiAzLjFWMTd6Ii8+PC9zdmc+";
@@ -420,7 +429,6 @@
             }
         }
 
-        // Fungsi Buka Video (Dikuci Mati Sesuai Desain Asli Rama)
         function bukaVideo(linkVideo, tajukVideo) {
             document.getElementById('halaman-senarai').style.display = 'none';
             document.getElementById('halaman-nonton').style.display = 'block';
