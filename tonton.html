@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Senarai Tontonan Kartun</title>
     <style>
-        /* === SISTEM TEMA WARNA ASLI === */
+        /* === SISTEM TEMA WARNA ASLI (DIKUNCI) === */
         :root {
             --bg-body: #f4f4f9;
             --bg-container: #ffffff;
@@ -50,14 +50,13 @@
             margin-bottom: 25px;
         }
 
-        /* Pembungkus Judul Utama dan Tombol Kembali */
         .title-area {
             display: flex;
             align-items: center;
             gap: 15px;
         }
 
-        /* Tombol Kembali di Pojok Kiri Atas sesuai request */
+        /* Tombol Kembali di Pojok Kiri Atas */
         .btn-kembali {
             background: #00e5ff;
             color: #141a28;
@@ -89,7 +88,7 @@
             cursor: pointer;
         }
 
-        /* === UKURAN & KOTAK VIDEO (ASLI TIDAK DIUBAH SAMA SEKALI) === */
+        /* === UKURAN & KOTAK VIDEO ASLI (MUTLAK TIDAK DIUBAH) === */
         .video-container {
             width: 100%;
             position: relative;
@@ -133,7 +132,7 @@
             display: none;
         }
 
-        /* Note Keterangan di bawah Judul Video */
+        /* Note Keterangan Tepat di Bawah Judul Video saat Diputar */
         .video-note {
             font-size: 14px;
             color: var(--text-muted);
@@ -146,7 +145,7 @@
             border-radius: 4px;
         }
 
-        /* Gambar QRIS Donasi (Hanya muncul di halaman video bagian bawah) */
+        /* Gambar QRIS Donasi Tepat di Bawah Player Halaman Video */
         .donation-box {
             display: none;
             text-align: center;
@@ -192,7 +191,7 @@
             border-color: #00e5ff;
         }
 
-        /* Thumbnail Ikon Gambar di Sebelah Kiri Judul */
+        /* Tempat Thumbnail Gambar di Samping Kiri Judul */
         .episode-thumbnail {
             width: 120px;
             height: 70px;
@@ -286,11 +285,31 @@
 
     <script>
         const params = new URLSearchParams(window.location.search);
-        const KEY_KARTUN = params.get('kartun');
+        const KEY_KARTUN = params.get('kartun') ? params.get('kartun').trim().toLowerCase() : "";
 
-        // URL Google Sheets utama untuk mengambil data dari kedua sheet
         const SHEET_KARTUN_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRgIbfZERZ-9WhUrdYdNdJ2_8qNsyC0OHNnKt9NSn8m9GVuQhvgMovQOUPtSd_6Fetus0adAxUu6G4O/pub?gid=0&single=true&output=csv";
         const SHEET_EPISODES_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRgIbfZERZ-9WhUrdYdNdJ2_8qNsyC0OHNnKt9NSn8m9GVuQhvgMovQOUPtSd_6Fetus0adAxUu6G4O/pub?gid=1868354275&single=true&output=csv";
+
+        // Fungsi Pintar membaca baris CSV agar tidak pecah karena koma di dalam link/judul
+        function parsingBarisCSV(teksBaris) {
+            let hasil = [];
+            let diDalamKutip = false;
+            let nilaiKolom = "";
+            
+            for (let i = 0; i < teksBaris.length; i++) {
+                let char = teksBaris[i];
+                if (char === '"' || char === "'") {
+                    diDalamKutip = !diDalamKutip;
+                } else if (char === ',' && !diInsideKutip) {
+                    hasil.push(nilaiKolom.trim());
+                    nilaiKolom = "";
+                } else {
+                    nilaiKolom += char;
+                }
+            }
+            hasil.push(nilaiKolom.trim());
+            return hasil;
+        }
 
         window.onload = function() {
             if(!KEY_KARTUN) {
@@ -299,27 +318,29 @@
                 return;
             }
             
-            // Ambil nama judul utama kartun dulu dari sheet pertama
             fetch(SHEET_KARTUN_URL)
             .then(res => res.text())
             .then(dataKartun => {
-                let barisK = dataKartun.split("\n");
+                let barisK = dataKartun.split(/\r?\n/);
                 let namaKartunSebenar = "";
+                
                 for(let i=1; i<barisK.length; i++) {
-                    let kol = barisK[i].split(",");
-                    if(kol.length >= 4 && kol[3].trim() === KEY_KARTUN) {
-                        namaKartunSebenar = kol[0].trim();
+                    if(barisK[i].trim() === "") continue;
+                    let kol = parsingBarisCSV(barisK[i]);
+                    if(kol.length >= 4 && kol[3].toLowerCase() === KEY_KARTUN) {
+                        namaKartunSebenar = kol[0];
                         break;
                     }
                 }
                 
                 if(namaKartunSebenar !== "") {
                     document.getElementById('namaKartun').innerText = namaKartunSebenar.toUpperCase();
-                    // Ambil daftar episode dari sheet kedua
                     muatTurunEpisodes();
                 } else {
-                    document.getElementById('namaKartun').innerText = "KARTUN TIDAK DITEMUI";
-                    document.getElementById('senaraiEpisod').innerHTML = "<div class='pesan-kosong'>Maaf, rekod kartun ini tidak wujud.</div>";
+                    // Jika rujukan URL berbeda nama, kita paksa ambil teks judul dari parameter URL sebagai penyelamat
+                    let namaFallback = KEY_KARTUN.replace(/-/g, " ");
+                    document.getElementById('namaKartun').innerText = namaFallback.toUpperCase();
+                    muatTurunEpisodes();
                 }
             });
         };
@@ -328,7 +349,7 @@
             fetch(SHEET_EPISODES_URL)
             .then(response => response.text())
             .then(data => {
-                let baris = data.split("\n");
+                let baris = data.split(/\r?\n/);
                 let senaraiBox = document.getElementById('senaraiEpisod');
                 senaraiBox.innerHTML = "";
                 let adaEpisod = false;
@@ -336,17 +357,17 @@
                 for(let i = 1; i < baris.length; i++) {
                     if(baris[i].trim() === "") continue;
 
-                    let kolom = baris[i].split(",");
+                    let kolom = parsingBarisCSV(baris[i]);
                     if(kolom.length < 4) continue;
 
-                    let idKartun = kolom[0].trim();
+                    let idKartun = kolom[0].toLowerCase();
 
-                    if(idKartun === KEY_KARTUN) {
+                    // Pencocokan fleksibel agar boboiboy-s1 atau boboiboy-season-1 tetap lolos terbaca
+                    if(idKartun === KEY_KARTUN || KEY_KARTUN.includes(idKartun) || idKartun.includes(KEY_KARTUN)) {
                         adaEpisod = true;
-                        let epJudul = kolom[2].trim();
-                        let epLink = kolom[3].trim();
-                        // Kolom E (Indeks ke-4) untuk Thumbnail Episode kamu
-                        let epThumb = kolom[4] ? kolom[4].trim() : ""; 
+                        let epJudul = kolom[2];
+                        let epLink = kolom[3];
+                        let epThumb = kolom[4] ? kolom[4] : ""; 
 
                         let htmlItem = `
                             <div class="episode-item" onclick="mainkanVideo('${epLink}', '${epJudul}')">
@@ -364,7 +385,7 @@
                 }
 
                 if(!adaEpisod) {
-                    senaraiBox.innerHTML = "<div class='pesan-kosong'>Belum ada episod untuk kartun ini.</div>";
+                    senaraiBox.innerHTML = "<div class='pesan-kosong'>Belum ada episod untuk kartun ini. Semak rujukan nama pautan pada Google Sheets.</div>";
                 }
             });
         }
@@ -382,7 +403,6 @@
             judulTayangan.innerText = judul;
             judulTayangan.style.display = "block";
 
-            // Munculkan Note & QRIS Donasi tepat di bawah video saat diputar
             noteTayangan.style.display = "block";
             qrisDonasi.style.display = "block";
 
