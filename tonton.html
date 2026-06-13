@@ -399,14 +399,15 @@
                     adaEpisode = true;
                     let gambarThumbnail = "";
 
-                    // Validasi link gambar Kolom E agar jika ada isinya langsung dipaksakan tampil tanpa fallback rusak
-                    if (linkThumbnailSheet !== "" && linkThumbnailSheet.toLowerCase() !== "undefined" && linkThumbnailSheet.startsWith("http")) {
+                    // JIKA KOLOM E BERISI LINK GAMBAR (BEBAS), MAKA LANGSUNG PAKAI LINK TERSEBUT
+                    if (linkThumbnailSheet !== "" && linkThumbnailSheet.toLowerCase() !== "undefined") {
                         gambarThumbnail = linkThumbnailSheet;
                     } else {
+                        // Fallback otomatis jika kolom E dikosongkan
                         if (!linkVideo.includes('drive.google.com') && linkVideo !== "") {
                             gambarThumbnail = `https://img.youtube.com/vi/${linkVideo}/0.jpg`;
                         } else {
-                            gambarThumbnail = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIThhOGE4YSI+PHBhdGggZD0iTTAgMGg0OHY0OEgweiIgZmlsbD0ibm9uZSIvPjxwYXRoIGQ9Ik0yMSAzaC0xOGMtMS4xIDAtMiAuOS0yIDh2MTJjMCAxLjEuOSAyIDIgMmgxOGMxLjEgMCAyLS45IDItMlY1YzAtMS4xLS$.5LTItMi0yem0tOSA0YzEuNjYgMCAzIDEuMzQgMyAzcy0xLjM0IDMtMyAzLTMtMS4zNC0zLTMgMS4zNC0zIDMtM3ptNiAxMmgtMTJ2LTEuNmMwLTIgNC0zLjEgNi0zLjFzNiAxLjEgNiAzLjFWMTd6Ii8+PC9zdmc+";
+                            gambarThumbnail = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIThhOGE4YSI+PHBhdGggZD0iTTAgMGg0OHY0OEgweiIgZmlsbD0ibm9uZSIvPjxwYXRoIGQ9Ik0yMSAzaC0xOGMtMS4xIDAtMiAuOS0yIDh2MTJjMCAxLjEuOSAyIDIgMmgxOGMxLjEgMCAyLS45IDItMlY1YzAtMS4xLS45LTItMi0yeG0tOSA0YzEuNjYgMCAzIDEuMzQgMyAzcy0xLjM0IDMtMyAzLTMtMS4zNC0zLTMgMS4zNC0zIDMtM3ptNiAxMmgtMTJ2LTEuNmMwLTIgNC0zLjEgNi0zLjFzNiAxLjEgNiAzLjFWMTd6Ii8+PC9zdmc+";
                         }
                     }
 
