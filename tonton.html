@@ -392,7 +392,7 @@
                 let judulEpisode = kolom[2].replace(/^"|"$/g, '').trim();
                 let linkVideo = kolom[3].replace(/^"|"$/g, '').trim();
                 
-                // KOLOM E ADALAH INDEKS KE-4 (Kolom ke-5 di Google Sheet)
+                // KOLOM E ADALAH INDEKS KE-4 (Kolom ke-5 di Google Sheet) Bersihkan juga tanda kutip dua tersembunyi
                 let linkThumbnailSheet = kolom[4] ? kolom[4].replace(/\r/g, "").replace(/^"|"$/g, '').trim() : "";
 
                 if(idKartunTab === kartunID) {
