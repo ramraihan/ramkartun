@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Senarai Tontonan Kartun</title>
     <style>
-        /* === SISTEM TEMA WARNA === */
+        /* === SISTEM TEMA WARNA ASLI === */
         :root {
             --bg-body: #f4f4f9;
             --bg-container: #ffffff;
@@ -13,7 +13,6 @@
             --border-card: #ddd;
             --text-main: #333333;
             --text-muted: #666666;
-            --bg-search: #ffffff;
         }
 
         .dark-mode {
@@ -23,7 +22,6 @@
             --border-card: #28334e;
             --text-main: #ffffff;
             --text-muted: #8f98b2;
-            --bg-search: #1f273a;
         }
 
         body {
@@ -43,7 +41,6 @@
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
             padding: 25px;
             border-top: 5px solid #00e5ff; 
-            position: relative;
         }
 
         .header-box {
@@ -51,6 +48,28 @@
             align-items: center;
             justify-content: space-between;
             margin-bottom: 25px;
+        }
+
+        /* Pembungkus Judul Utama dan Tombol Kembali */
+        .title-area {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        /* Tombol Kembali di Pojok Kiri Atas sesuai request */
+        .btn-kembali {
+            background: #00e5ff;
+            color: #141a28;
+            border: none;
+            padding: 6px 14px;
+            font-size: 14px;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
         }
 
         h2 {
@@ -70,7 +89,7 @@
             cursor: pointer;
         }
 
-        /* Ruang Video (Ukuran asli tidak diubah sama sekali) */
+        /* === UKURAN & KOTAK VIDEO (ASLI TIDAK DIUBAH SAMA SEKALI) === */
         .video-container {
             width: 100%;
             position: relative;
@@ -114,11 +133,12 @@
             display: none;
         }
 
-        /* Teks Note Keterangan permanen di bawah judul video sesuai request kamu */
+        /* Note Keterangan di bawah Judul Video */
         .video-note {
             font-size: 14px;
             color: var(--text-muted);
-            margin-bottom: 20px;
+            margin-top: 5px;
+            margin-bottom: 15px;
             display: none;
             padding: 8px 12px;
             background: var(--bg-card);
@@ -126,7 +146,28 @@
             border-radius: 4px;
         }
 
-        /* List View (Daftar Episode) */
+        /* Gambar QRIS Donasi (Hanya muncul di halaman video bagian bawah) */
+        .donation-box {
+            display: none;
+            text-align: center;
+            padding: 15px;
+            margin-top: 25px;
+            border-top: 1px dashed var(--border-card);
+        }
+
+        .donation-title {
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .donation-qr {
+            max-width: 200px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        /* === LIST VIEW DAFTAR EPISODE ASLI === */
         .list-container {
             display: flex;
             flex-direction: column;
@@ -151,7 +192,7 @@
             border-color: #00e5ff;
         }
 
-        /* Bagian Thumbnail List View */
+        /* Thumbnail Ikon Gambar di Sebelah Kiri Judul */
         .episode-thumbnail {
             width: 120px;
             height: 70px;
@@ -199,27 +240,6 @@
             color: var(--text-muted);
         }
 
-        /* Area Donasi QRIS di bagian bawah agak jauh */
-        .donation-container {
-            margin-top: 60px; 
-            text-align: center;
-            padding: 20px;
-            border-top: 1px dashed var(--border-card);
-        }
-
-        .donation-title {
-            font-size: 14px;
-            font-weight: bold;
-            color: var(--text-main);
-            margin-bottom: 10px;
-        }
-
-        .donation-qr {
-            max-width: 200px; 
-            border-radius: 8px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-        }
-
         @media (max-width: 768px) {
             .video-container iframe {
                 height: 220px;
@@ -239,7 +259,10 @@
     <div class="container">
         
         <div class="header-box">
-            <h2 id="namaKartun">Loading...</h2>
+            <div class="title-area">
+                <a href="index.html" class="btn-kembali">← Kembali</a>
+                <h2 id="namaKartun">Loading...</h2>
+            </div>
             <button class="btn-theme" onclick="tukarTema()">Mod Gelap</button>
         </div>
 
@@ -252,12 +275,12 @@
 
         <div class="video-note" id="noteTayangan">Note: Kalau mau layar penuh bisa landscape. Aktifkan mode putar otomatis atau rotasi otomatis layar HP.</div>
         
-        <div class="list-container" id="senaraiEpisod"></div>
-
-        <div class="donation-container">
+        <div class="donation-box" id="qrisDonasi">
             <div class="donation-title">Dukung Nonton Kartun via QRIS Donasi</div>
             <img src="https://via.placeholder.com/200x250?text=QRIS+DONASI" alt="QRIS Donasi" class="donation-qr">
         </div>
+
+        <div class="list-container" id="senaraiEpisod"></div>
 
     </div>
 
@@ -265,8 +288,9 @@
         const params = new URLSearchParams(window.location.search);
         const KEY_KARTUN = params.get('kartun');
 
-        // URL Google Sheets (Gid=0)
-        const URL_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRgIbfZERZ-9WhUrdYdNdJ2_8qNsyC0OHNnKt9NSn8m9GVuQhvgMovQOUPtSd_6Fetus0adAxUu6G4O/pub?gid=0&single=true&output=csv";
+        // URL Google Sheets utama untuk mengambil data dari kedua sheet
+        const SHEET_KARTUN_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRgIbfZERZ-9WhUrdYdNdJ2_8qNsyC0OHNnKt9NSn8m9GVuQhvgMovQOUPtSd_6Fetus0adAxUu6G4O/pub?gid=0&single=true&output=csv";
+        const SHEET_EPISODES_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRgIbfZERZ-9WhUrdYdNdJ2_8qNsyC0OHNnKt9NSn8m9GVuQhvgMovQOUPtSd_6Fetus0adAxUu6G4O/pub?gid=1868354275&single=true&output=csv";
 
         window.onload = function() {
             if(!KEY_KARTUN) {
@@ -275,50 +299,59 @@
                 return;
             }
             
-            fetch(URL_CSV)
-            .then(response => response.text())
-            .then(data => {
-                prosesDataEpisode(data);
-            })
-            .catch(err => {
-                console.error(err);
-                document.getElementById('namaKartun').innerText = "RALAT DATA";
+            // Ambil nama judul utama kartun dulu dari sheet pertama
+            fetch(SHEET_KARTUN_URL)
+            .then(res => res.text())
+            .then(dataKartun => {
+                let barisK = dataKartun.split("\n");
+                let namaKartunSebenar = "";
+                for(let i=1; i<barisK.length; i++) {
+                    let kol = barisK[i].split(",");
+                    if(kol.length >= 4 && kol[3].trim() === KEY_KARTUN) {
+                        namaKartunSebenar = kol[0].trim();
+                        break;
+                    }
+                }
+                
+                if(namaKartunSebenar !== "") {
+                    document.getElementById('namaKartun').innerText = namaKartunSebenar.toUpperCase();
+                    // Ambil daftar episode dari sheet kedua
+                    muatTurunEpisodes();
+                } else {
+                    document.getElementById('namaKartun').innerText = "KARTUN TIDAK DITEMUI";
+                    document.getElementById('senaraiEpisod').innerHTML = "<div class='pesan-kosong'>Maaf, rekod kartun ini tidak wujud.</div>";
+                }
             });
         };
 
-        function prosesDataEpisode(text) {
-            let baris = text.split("\n");
-            let senaraiBox = document.getElementById('senaraiEpisod');
-            senaraiBox.innerHTML = "";
+        function muatTurunEpisodes() {
+            fetch(SHEET_EPISODES_URL)
+            .then(response => response.text())
+            .then(data => {
+                let baris = data.split("\n");
+                let senaraiBox = document.getElementById('senaraiEpisod');
+                senaraiBox.innerHTML = "";
+                let adaEpisod = false;
 
-            let jumpaKartun = false;
-            let namaKartunSebenar = "";
-            let adaEpisod = false;
+                for(let i = 1; i < baris.length; i++) {
+                    if(baris[i].trim() === "") continue;
 
-            for(let i = 1; i < baris.length; i++) {
-                if(baris[i].trim() === "") continue;
+                    let kolom = baris[i].split(",");
+                    if(kolom.length < 4) continue;
 
-                let kolom = baris[i].split(",");
-                if(kolom.length < 4) continue;
+                    let idKartun = kolom[0].trim();
 
-                let judulUtama = kolom[0].trim();
-                let linkRujukan = kolom[3].trim();
-
-                if(linkRujukan === KEY_KARTUN) {
-                    jumpaKartun = true;
-                    namaKartunSebenar = judulUtama;
-
-                    if(kolom.length > 4 && kolom[4].trim() !== "") {
+                    if(idKartun === KEY_KARTUN) {
                         adaEpisod = true;
-                        
-                        let epJudul = kolom[4].trim();
-                        let epLink = kolom[5] ? kolom[5].trim() : "";
-                        let epThumb = kolom[6] ? kolom[6].trim() : "";
+                        let epJudul = kolom[2].trim();
+                        let epLink = kolom[3].trim();
+                        // Kolom E (Indeks ke-4) untuk Thumbnail Episode kamu
+                        let epThumb = kolom[4] ? kolom[4].trim() : ""; 
 
                         let htmlItem = `
                             <div class="episode-item" onclick="mainkanVideo('${epLink}', '${epJudul}')">
                                 <div class="episode-thumbnail">
-                                    ${epThumb !== "" ? `<img src="${epThumb}" alt="${epJudul}">` : `<div style="color:var(--text-muted); font-size:11px;">No Image</div>`}
+                                    ${epThumb !== "" ? `<img src="${epThumb}" alt="${epJudul}">` : `<div style='color:var(--text-muted); font-size:11px;'>No Image</div>`}
                                 </div>
                                 <div class="episode-info">
                                     <p class="episode-title">${epJudul}</p>
@@ -329,17 +362,11 @@
                         senaraiBox.innerHTML += htmlItem;
                     }
                 }
-            }
 
-            if(!jumpaKartun) {
-                document.getElementById('namaKartun').innerText = "KARTUN TIDAK DITEMUI";
-                senaraiBox.innerHTML = "<div class='pesan-kosong'>Maaf, rekod kartun ini tidak wujud.</div>";
-            } else {
-                document.getElementById('namaKartun').innerText = namaKartunSebenar.toUpperCase();
                 if(!adaEpisod) {
                     senaraiBox.innerHTML = "<div class='pesan-kosong'>Belum ada episod untuk kartun ini.</div>";
                 }
-            }
+            });
         }
 
         function mainkanVideo(link, judul) {
@@ -347,6 +374,7 @@
             let videoPlayer = document.getElementById('videoPlayer');
             let judulTayangan = document.getElementById('judulTayangan');
             let noteTayangan = document.getElementById('noteTayangan');
+            let qrisDonasi = document.getElementById('qrisDonasi');
 
             videoPlayer.src = link;
             playerContainer.style.display = "block";
@@ -354,8 +382,9 @@
             judulTayangan.innerText = judul;
             judulTayangan.style.display = "block";
 
-            // Langsung memunculkan Note Keterangan permanen
+            // Munculkan Note & QRIS Donasi tepat di bawah video saat diputar
             noteTayangan.style.display = "block";
+            qrisDonasi.style.display = "block";
 
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
@@ -365,11 +394,13 @@
             let videoPlayer = document.getElementById('videoPlayer');
             let judulTayangan = document.getElementById('judulTayangan');
             let noteTayangan = document.getElementById('noteTayangan');
+            let qrisDonasi = document.getElementById('qrisDonasi');
 
             videoPlayer.src = "";
             playerContainer.style.display = "none";
             judulTayangan.style.display = "none";
             noteTayangan.style.display = "none";
+            qrisDonasi.style.display = "none";
         }
 
         function tukarTema() {
