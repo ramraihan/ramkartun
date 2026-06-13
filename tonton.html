@@ -352,27 +352,6 @@
             });
         };
 
-        // Fungsi Parser CSV Khusus agar tanda koma di dalam Judul tidak mengacaukan pembacaan Kolom E (Indeks 4)
-        function pecahBarisCSV(teksBaris) {
-            let hasil = [];
-            let dalamKutipan = false;
-            let isiKolom = "";
-            
-            for (let i = 0; i < teksBaris.length; i++) {
-                let karakter = teksBaris[i];
-                if (karakter === '"') {
-                    dalamKutipan = !dalamKutipan;
-                } else if (karakter === ',' && !dalamKutipan) {
-                    hasil.push(isiKolom);
-                    isiKolom = "";
-                } else {
-                    isiKolom += karakter;
-                }
-            }
-            hasil.push(isiKolom);
-            return hasil;
-        }
-
         function saringDanPaparkanEpisode(text) {
             let baris = text.split("\n");
             let listContainer = document.getElementById('boxSenaraiEpisode');
@@ -383,8 +362,8 @@
             for(let i = 1; i < baris.length; i++) {
                 if(baris[i].trim() === "") continue;
 
-                // Menggunakan fungsi pemisah berbasis pengaman kutipan koma
-                let kolom = pecahBarisCSV(baris[i]);
+                // Menggunakan split standar agar link gambar utuh tidak terpotong logika parser lama
+                let kolom = baris[i].split(",");
                 if(!kolom || kolom.length < 4) continue;
 
                 let idKartunTab = kolom[0].replace(/^"|"$/g, '').trim().toLowerCase();
@@ -392,14 +371,14 @@
                 let judulEpisode = kolom[2].replace(/^"|"$/g, '').trim();
                 let linkVideo = kolom[3].replace(/^"|"$/g, '').trim();
                 
-                // KOLOM E ADALAH INDEKS KE-4 (Kolom ke-5 di Google Sheet) Bersihkan juga tanda kutip dua tersembunyi
+                // Ambil link gambar murni dari Kolom E dan bersihkan dari tanda kutip serta sisa karakter spasial
                 let linkThumbnailSheet = kolom[4] ? kolom[4].replace(/\r/g, "").replace(/^"|"$/g, '').trim() : "";
 
                 if(idKartunTab === kartunID) {
                     adaEpisode = true;
                     let gambarThumbnail = "";
 
-                    // JIKA KOLOM E BERISI LINK GAMBAR (BEBAS), MAKA LANGSUNG PAKAI LINK TERSEBUT
+                    // Jika Kolom E berisi link gambar valid, pasang langsung ke thumbnail
                     if (linkThumbnailSheet !== "" && linkThumbnailSheet.toLowerCase() !== "undefined") {
                         gambarThumbnail = linkThumbnailSheet;
                     } else {
