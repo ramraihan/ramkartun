@@ -352,29 +352,9 @@
             });
         };
 
-        // Fungsi bantu pemisah baris CSV yang aman dari gangguan tanda kutip ganda
-        function uraikanBarisCSV(teksBaris) {
-            let hasil = [];
-            let diDalamKutip = false;
-            let nilaiKolom = "";
-            
-            for (let i = 0; i < teksBaris.length; i++) {
-                let karakter = teksBaris[i];
-                if (karakter === '"') {
-                    diDalamKutip = !diDalamKutip;
-                } else if (karakter === ',' && !diDalamKutip) {
-                    hasil.push(nilaiKolom.trim());
-                    nilaiKolom = "";
-                } else {
-                    nilaiKolom += karakter;
-                }
-            }
-            hasil.push(nilaiKolom.trim());
-            return hasil;
-        }
-
         function saringDanPaparkanEpisode(text) {
-            let baris = text.replace(/\r/g, "").split("\n");
+            // Memisahkan baris berdasarkan ganti baris secara aman
+            let baris = text.split("\n");
             let listContainer = document.getElementById('boxSenaraiEpisode');
             listContainer.innerHTML = ""; 
 
@@ -383,15 +363,16 @@
             for(let i = 1; i < baris.length; i++) {
                 if(baris[i].trim() === "") continue;
 
-                // Memakai fungsi uraian aman agar kolom terpisah dengan sempurna sesuai urutan kolom asli
-                let kolom = uraikanBarisCSV(baris[i]);
+                let kolom = baris[i].split(",");
                 if(!kolom || kolom.length < 4) continue;
 
                 let idKartunTab = kolom[0].replace(/^"|"$/g, '').trim().toLowerCase();
                 let noEpisode = kolom[1].replace(/^"|"$/g, '').trim();
                 let judulEpisode = kolom[2].replace(/^"|"$/g, '').trim();
                 let linkVideo = kolom[3].replace(/^"|"$/g, '').trim();
-                let linkThumbnailSheet = kolom[4] ? kolom[4].replace(/^"|"$/g, '').trim() : "";
+                
+                // BERSIHKAN TOTAL KARAKTER '\r' YANG MENEMPEL DI UJUNG LINK THUMBNAIL (KOLOM E)
+                let linkThumbnailSheet = kolom[4] ? kolom[4].replace(/\r/g, "").replace(/^"|"$/g, '').trim() : "";
 
                 if(idKartunTab === kartunID) {
                     adaEpisode = true;
