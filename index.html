@@ -261,7 +261,6 @@
     const URL_CSV_KARTUN = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRgIbfZERZ-9WhUrdYdNdJ2_8qNsyC0OHNnKt9NSn8m9GVuQhvgMovQOUPtSd_6Fetus0adAxUu6G4O/pub?gid=0&single=true&output=csv";
     var kategoriSemasa = "semua";
 
-    // 1. Jalankan saat halaman dimuat
     window.onload = function() {
         fetch(URL_CSV_KARTUN)
         .then(response => response.text())
@@ -269,15 +268,12 @@
         .catch(err => console.error("Gagal memuat data: ", err));
     };
 
-    // 2. Fungsi Utama untuk memproses data
-            
     function parsedataCSV(text) {
         let baris = text.split("\n");
         let sliderBanner = document.getElementById('sliderBanner');
         let grid = document.getElementById('gridKartun');
-        let daftarBanner = []; // Wadah khusus untuk banner
+        let daftarBanner = [];
 
-        // Bersihkan area tampilan
         if(sliderBanner) sliderBanner.innerHTML = "";
         if(grid) grid.innerHTML = "";
 
@@ -294,15 +290,10 @@
                 urutan: kolom[5] ? parseInt(kolom[5].trim()) : 99 
             };
 
-// Di dalam loop for (setelah let data = {...})
-console.log("Membaca:", data.judul, "Banner:", data.bannerUtama);
-
-            // Simpan ke daftar banner jika ada gambarnya
             if (data.bannerUtama !== "") {
                 daftarBanner.push(data);
             }
 
-            // Masukkan ke kartu grid
             if(grid) {
                 grid.innerHTML += `
                 <a href="tonton.html?kartun=${data.linkKartun}" class="movie-item" data-type="${data.tipe}">
@@ -313,24 +304,20 @@ console.log("Membaca:", data.judul, "Banner:", data.bannerUtama);
             }
         }
         
-        // URUTKAN BANNER berdasarkan angka di kolom F (Urutan)
         daftarBanner.sort((a, b) => a.urutan - b.urutan);
 
-        // Tampilkan banner yang sudah urut ke layar
         daftarBanner.forEach(b => {
             sliderBanner.innerHTML += `
                 <a href="tonton.html?kartun=${b.linkKartun}">
-                    <img src="${b.bannerUtama}" alt="${b.judul}" style="display:none;">
+                    <img src="${b.bannerUtama}" alt="${b.judul}" style="display:none; width:100%; height:200px; object-fit:cover;">
                 </a>`;
         });
         
-        // Jalankan slide banner jika ada isinya
         if(sliderBanner && sliderBanner.children.length > 0) {
             tampilkanBanner(); 
         }
     }
 
-    // 3. Fungsi Filter Kategori
     function tukarKategori(kategori, elemen) {
         document.querySelectorAll('.nav-item').forEach(btn => btn.classList.remove('active'));
         elemen.classList.add('active');
@@ -338,7 +325,6 @@ console.log("Membaca:", data.judul, "Banner:", data.bannerUtama);
         jalankanPenyaringan();
     }
 
-    // 4. Fungsi Pencarian & Filter
     function jalankanPenyaringan() {
         let filter = document.getElementById('cariKartun').value.toLowerCase();
         let items = document.getElementsByClassName('movie-item');
@@ -351,32 +337,26 @@ console.log("Membaca:", data.judul, "Banner:", data.bannerUtama);
         }
     }
 
-    // 5. Fungsi Tema
     function tukarTema() {
         document.body.classList.toggle('dark-mode');
         document.getElementById('temaBtn').innerText = document.body.classList.contains('dark-mode') ? "Mod Terang" : "Mod Gelap";
     }
-    
-        // FUNGSI UNTUK MENGGESER BANNER OTOMATIS
-let slideIndex = 0;
-function tampilkanBanner() {
-    let slides = document.querySelectorAll("#sliderBanner img");
-    if(slides.length === 0) return;
-    
-    // Sembunyikan semua gambar
-    for (let i = 0; i < slides.length; i++) { 
-        slides[i].style.display = "none"; 
-    }
-    
-    // Tampilkan gambar berikutnya
-    slideIndex++;
-    if (slideIndex > slides.length) { slideIndex = 1 }
-    
-    // Tampilkan gambar yang aktif
-    slides[slideIndex - 1].style.display = "block";
-    
-    // Geser otomatis setiap 3 detik
-    setTimeout(tampilkanBanner, 3000); 
-}
 
+    let slideIndex = 0;
+    function tampilkanBanner() {
+        let container = document.getElementById('sliderBanner');
+        let slides = container.getElementsByTagName("img");
+        
+        if(slides.length === 0) return;
+        
+        for (let i = 0; i < slides.length; i++) {
+            slides[i].style.display = "none";
+        }
+        
+        slideIndex++;
+        if (slideIndex > slides.length) { slideIndex = 1; }
+        slides[slideIndex - 1].style.display = "block";
+        
+        setTimeout(tampilkanBanner, 3000);
+    }
 </script>
