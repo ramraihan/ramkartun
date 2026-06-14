@@ -269,40 +269,48 @@
     };
 
     function parsedataCSV(text) {
-        let baris = text.split("\n");
-        let sliderBanner = document.getElementById('sliderBanner');
-        let grid = document.getElementById('gridKartun');
-        let daftarBanner = [];
+    let baris = text.split("\n");
+    let sliderBanner = document.getElementById('sliderBanner');
+    let grid = document.getElementById('gridKartun');
 
-        if(sliderBanner) sliderBanner.innerHTML = "";
-        if(grid) grid.innerHTML = "";
+    if(sliderBanner) sliderBanner.innerHTML = "";
+    if(grid) grid.innerHTML = "";
 
-        for(let i = 1; i < baris.length; i++) {
-            if(baris[i].trim() === "") continue;
-            let kolom = baris[i].split(",");
-            
-            let data = {
-                judul: kolom[0].trim(),
-                tipe: kolom[1].trim().toLowerCase(),
-                gambar: kolom[2].trim(),
-                linkKartun: kolom[3].trim(),
-                bannerUtama: kolom[4] ? kolom[4].trim() : "",
-                urutan: kolom[5] ? parseInt(kolom[5].trim()) : 99 
-            };
+    // Ambil baris pertama saja untuk banner
+    let bannerDitemukan = false;
 
-            if (data.bannerUtama !== "") {
-                daftarBanner.push(data);
-            }
+    for(let i = 1; i < baris.length; i++) {
+        if(baris[i].trim() === "") continue;
+        let kolom = baris[i].split(",");
+        
+        let data = {
+            judul: kolom[0].trim(),
+            tipe: kolom[1].trim().toLowerCase(),
+            gambar: kolom[2].trim(),
+            linkKartun: kolom[3].trim(),
+            bannerUtama: kolom[4] ? kolom[4].trim() : ""
+        };
 
-            if(grid) {
-                grid.innerHTML += `
-                <a href="tonton.html?kartun=${data.linkKartun}" class="movie-item" data-type="${data.tipe}">
-                    <div class="id-card"><img src="${data.gambar}" alt="${data.judul}"></div>
-                    <p class="card-title">${data.judul}</p>
-                    <span class="card-type">${data.tipe}</span>
+        // Jika ketemu data banner pertama, tampilkan dan tandai
+        if (!bannerDitemukan && data.bannerUtama !== "") {
+            sliderBanner.innerHTML = `
+                <a href="tonton.html?kartun=${data.linkKartun}">
+                    <img src="${data.bannerUtama}" alt="Banner Utama">
                 </a>`;
-            }
+            bannerDitemukan = true;
         }
+
+        // Grid Kartun
+        if(grid) {
+            grid.innerHTML += `
+            <a href="tonton.html?kartun=${data.linkKartun}" class="movie-item" data-type="${data.tipe}">
+                <div class="id-card"><img src="${data.gambar}" alt="${data.judul}"></div>
+                <p class="card-title">${data.judul}</p>
+                <span class="card-type">${data.tipe}</span>
+            </a>`;
+        }
+    }
+}
         
         daftarBanner.sort((a, b) => a.urutan - b.urutan);
 
