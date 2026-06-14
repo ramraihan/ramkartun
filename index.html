@@ -277,28 +277,57 @@
     let baris = text.split("\n");
     let dataKartun = [];
     let sliderBanner = document.getElementById('sliderBanner');
-    sliderBanner.innerHTML = ""; // Bersihkan slider lama
+    let grid = document.getElementById('gridKartun');
 
+    // 1. Bersihkan tampilan awal
+    if(sliderBanner) sliderBanner.innerHTML = "";
+    if(grid) grid.innerHTML = "";
+
+    // 2. Ambil data
     for(let i = 1; i < baris.length; i++) {
         if(baris[i].trim() === "") continue;
-        
         let kolom = baris[i].split(",");
+        if(kolom.length < 4) continue; // Pastikan kolom minimal ada 4
+        
         let data = {
             judul: kolom[0].trim(),
             tipe: kolom[1].trim().toLowerCase(),
             gambar: kolom[2].trim(),
             linkKartun: kolom[3].trim(),
-            bannerUtama: kolom[4] ? kolom[4].trim() : "" // Ambil data banner dari kolom ke-5
+            bannerUtama: kolom[4] ? kolom[4].trim() : ""
         };
         dataKartun.push(data);
 
-        // Tambahkan ke Slider jika ada link bannernya
-                if (data.bannerUtama !== "") {
+        // 3. Masukkan ke slider
+        if (sliderBanner && data.bannerUtama !== "") {
             sliderBanner.innerHTML += `
                 <a href="tonton.html?kartun=${data.linkKartun}">
-                    <img src="${data.bannerUtama}" alt="${data.judul}">
+                    <img src="${data.bannerUtama}" alt="${data.judul}" style="display:none;">
                 </a>`;
         }
+    }
+
+    // 4. Urutkan dan tampilkan ID Card
+    dataKartun.sort((a, b) => a.judul.localeCompare(b.judul));
+    dataKartun.forEach(kartun => {
+        if(grid) {
+            grid.innerHTML += `
+                <a href="tonton.html?kartun=${kartun.linkKartun}" class="movie-item" data-type="${kartun.tipe}">
+                    <div class="id-card"><img src="${kartun.gambar}" alt="${kartun.judul}"></div>
+                    <p class="card-title">${kartun.judul}</p>
+                    <span class="card-type">${kartun.tipe}</span>
+                </a>
+            `;
+        }
+    });
+
+    // 5. Jalankan slider jika ada gambarnya
+    if(sliderBanner && sliderBanner.children.length > 0) {
+        sliderBanner.children[0].querySelector('img').style.display = "block";
+        tampilkanBanner();
+    }
+}
+
 
     // Urutkan ID Card A-Z
     dataKartun.sort((a, b) => a.judul.localeCompare(b.judul));
