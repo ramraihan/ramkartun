@@ -254,6 +254,16 @@
     border: 2px solid #00e5ff;
 }
 
+.dark-mode {
+    background-color: #121212 !important;
+    color: white !important;
+}
+.dark-mode .header-box, 
+.dark-mode .list-view {
+    background-color: #1e1e1e !important;
+    color: white !important;
+}
+
     </style>
 </head>
 <body>
@@ -266,7 +276,7 @@
                 <button class="btn-close" onclick="window.history.back()">✕</button>
                 <span id="judul-halaman-list">LOADING...</span>
             </h2>
-            <button class="btn-theme" id="temaBtn-list">Mode Gelap</button>
+            <button class="btn-theme" id="temaBtn-list" onclick="toggleDarkMode()">Mode Gelap</button>
         </div>
         <img id="banner-kartun" src="" alt="Banner">
         <div class="list-view" id="boxSenaraiEpisode"></div>
@@ -278,7 +288,7 @@
                 <button class="btn-close" onclick="tutupHalamanNonton()">✕</button>
                 <span id="judul-halaman-nonton">LOADING...</span>
             </h2>
-            <button class="btn-theme" id="temaBtn-nonton">Mode Gelap</button>
+            <button class="btn-theme" id="temaBtn-nonton" onclick="toggleDarkMode()">Mode Gelap</button>
         </div>
 
         <div class="video-box">
@@ -290,16 +300,26 @@
         
         <div class="donation-box">
             <div class="donation-title">Dukung Nonton Kartun via QRIS Donasi</div>
-            <img src="https://i.ibb.co.com/YBp6WJv3.jpg" alt="QRIS">
+            <img src="https://i.ibb.co.com/YBp6WJv3/qris.jpg" alt="QRIS">
         </div>
     </div>
 
     <script>
+    // Fungsi tutup (yang sudah kamu buat sebelumnya)
     function tutupHalamanNonton() {
-        // Sembunyikan halaman nonton
         document.getElementById('halaman-nonton').style.display = 'none';
-        // Tampilkan kembali halaman senarai
         document.getElementById('halaman-senarai').style.display = 'block';
+    }
+
+    // Fungsi Mode Gelap (Taruh di bawah fungsi di atas)
+    function toggleDarkMode() {
+        document.body.classList.toggle('dark-mode');
+        
+        // Ubah teks tombol
+        const isDark = document.body.classList.contains('dark-mode');
+        const btnText = isDark ? "Mode Terang" : "Mode Gelap";
+        document.getElementById('temaBtn-list').innerText = btnText;
+        document.getElementById('temaBtn-nonton').innerText = btnText;
     }
     
         const URL_CSV_EPISODES = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRgIbfZERZ-9WhUrdYdNdJ2_8qNsyC0OHNnKt9NSn8m9GVuQhvgMovQOUPtSd_6Fetus0adAxUu6G4O/pub?gid=1389944860&single=true&output=csv";
