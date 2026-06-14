@@ -269,29 +269,37 @@
     };
 
     // 2. Fungsi Utama untuk memproses data
-    function parsedataCSV(text) {
+        function parsedataCSV(text) {
         let baris = text.split("\n");
         let sliderBanner = document.getElementById('sliderBanner');
         let grid = document.getElementById('gridKartun');
         
-        // Bersihkan tampilan dulu
+        // Bersihkan area
         if(sliderBanner) sliderBanner.innerHTML = "";
         if(grid) grid.innerHTML = "";
 
-        // Loop data mulai dari baris ke-2 (index 1)
         for(let i = 1; i < baris.length; i++) {
             if(baris[i].trim() === "") continue;
             let kolom = baris[i].split(",");
-            if(kolom.length < 4) continue;
-
+            
+            // Kita ambil data dari kolom 0 sampai 4
             let data = {
                 judul: kolom[0].trim(),
                 tipe: kolom[1].trim().toLowerCase(),
                 gambar: kolom[2].trim(),
-                linkKartun: kolom[3].trim()
+                linkKartun: kolom[3].trim(),
+                bannerUtama: kolom[4] ? kolom[4].trim() : "" // Mengambil kolom E (banner)
             };
 
-            // Masukkan ke Grid Kartu
+            // Jika ada link banner di kolom E, masukkan ke slider
+            if (sliderBanner && data.bannerUtama !== "") {
+                sliderBanner.innerHTML += `
+                    <a href="tonton.html?kartun=${data.linkKartun}">
+                        <img src="${data.bannerUtama}" alt="${data.judul}" style="display:none;">
+                    </a>`;
+            }
+
+            // Masukkan ke kartu grid
             if(grid) {
                 grid.innerHTML += `
                 <a href="tonton.html?kartun=${data.linkKartun}" class="movie-item" data-type="${data.tipe}">
@@ -300,6 +308,11 @@
                     <span class="card-type">${data.tipe}</span>
                 </a>`;
             }
+        }
+        
+        // Jalankan slide banner jika ada isinya
+        if(sliderBanner && sliderBanner.children.length > 0) {
+            tampilkanBanner(); 
         }
     }
 
