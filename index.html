@@ -216,24 +216,25 @@
 <body>
 
     <div class="container">
-        
-        <div class="header-box">
-            <h2>Selamat Datang di Nonton Kartun</h2>
-            
-            <div class="nav-menu">
-                <button class="nav-item active" onclick="tukarKategori('semua', this)">Semua</button>
-                <button class="nav-item" onclick="tukarKategori('series', this)">Series</button>
-                <button class="nav-item" onclick="tukarKategori('movie', this)">Movie</button>
-                <button class="btn-theme" id="temaBtn" onclick="tukarTema()">Mod Gelap</button>
-            </div>
-        </div>
-
-        <div class="search-container">
-            <input type="text" id="cariKartun" class="search-box" placeholder="Cari nama kartun di sini..." onkeyup="jalankanPenyaringan()">
-        </div>
-        
-        <div class="card-grid" id="gridKartun"></div>
+    <div class="header-box">
+    <h2>Selamat Datang di Nonton Kartun</h2>
+    
+    <div class="nav-menu">
+        <button class="nav-item active" onclick="tukarKategori('semua', this)">Semua</button>
+        <button class="nav-item" onclick="tukarKategori('series', this)">Series</button>
+        <button class="nav-item" onclick="tukarKategori('movie', this)">Movie</button>
+        <button class="btn-theme" id="temaBtn" onclick="tukarTema()">Mod Gelap</button>
     </div>
+</div>
+
+    <div id="bannerContainer" style="margin-bottom: 25px;"></div>
+
+    <div class="search-container">
+        <input type="text" id="cariKartun" class="search-box" placeholder="Cari nama kartun di sini..." onkeyup="jalankanPenyaringan()">
+    </div>
+    
+    <div class="card-grid" id="gridKartun"></div>
+</div>
 
     <script>
         const URL_CSV_KARTUN = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRgIbfZERZ-9WhUrdYdNdJ2_8qNsyC0OHNnKt9NSn8m9GVuQhvgMovQOUPtSd_6Fetus0adAxUu6G4O/pub?gid=0&single=true&output=csv";
@@ -249,32 +250,53 @@
             .catch(err => console.error("Gagal memuat data Google Sheets: ", err));
         };
 
-        function parsedataCSV(text) {
-            let baris = text.split("\n");
-            let grid = document.getElementById('gridKartun');
-            grid.innerHTML = ""; 
+                function parsedataCSV(text) {
+    let baris = text.split("\n");
+    let dataSemuaKartun = [];
+    let bannerContainer = document.getElementById('bannerContainer');
+    let bannerSudahTampil = false;
 
-            for(let i = 1; i < baris.length; i++) {
-                if(baris[i].trim() === "") continue;
-                
-                let kolom = baris[i].split(",");
-                let judul = kolom[0].trim();
-                let tipe = kolom[1].trim().toLowerCase();
-                let gambar = kolom[2].trim();
-                let linkKartun = kolom[3].trim();
+    for(let i = 1; i < baris.length; i++) {
+        if(baris[i].trim() === "") continue;
+        
+        let kolom = baris[i].split(",");
+        let data = {
+            judul: kolom[0].trim(),
+            tipe: kolom[1].trim().toLowerCase(),
+            gambar: kolom[2].trim(),
+            linkKartun: kolom[3].trim(),
+            linkBanner: kolom[4] ? kolom[4].trim() : "" // Kolom E (indeks 4)
+        };
 
-                let htmlCard = `
-                    <a href="tonton.html?kartun=${linkKartun}" class="movie-item" data-type="${tipe}">
-                        <div class="id-card">
-                            <img src="${gambar}" alt="${judul}">
-                        </div>
-                        <p class="card-title">${judul}</p>
-                        <span class="card-type">${tipe}</span>
-                    </a>
-                `;
-                grid.innerHTML += htmlCard;
-            }
+        // Pasang banner hanya jika belum ada banner yang tampil
+        if (!bannerSudahTampil && data.linkBanner !== "") {
+            bannerContainer.innerHTML = `
+                <a href="tonton.html?kartun=${data.linkKartun}">
+                    <img src="${data.linkBanner}" style="width:100%; height:200px; object-fit:cover; border-radius:10px;">
+                </a>`;
+            bannerSudahTampil = true;
         }
+
+        dataSemuaKartun.push(data);
+    }
+
+    // Urutkan A-Z berdasarkan judul
+    dataSemuaKartun.sort((a, b) => a.judul.localeCompare(b.judul));
+
+    // Tampilkan Grid Kartun
+    let grid = document.getElementById('gridKartun');
+    grid.innerHTML = ""; 
+
+    dataSemuaKartun.forEach(kartun => {
+        grid.innerHTML += `
+            <a href="tonton.html?kartun=${kartun.linkKartun}" class="movie-item" data-type="${kartun.tipe}">
+                <div class="id-card"><img src="${kartun.gambar}" alt="${kartun.judul}"></div>
+                <p class="card-title">${kartun.judul}</p>
+                <span class="card-type">${kartun.tipe}</span>
+            </a>
+        `;
+    });
+}
 
         function tukarKategori(kategori, elemenButang) {
             var butangKategori = document.getElementsByClassName('nav-item');
