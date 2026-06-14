@@ -270,12 +270,14 @@
     };
 
     // 2. Fungsi Utama untuk memproses data
-        function parsedataCSV(text) {
+            
+    function parsedataCSV(text) {
         let baris = text.split("\n");
         let sliderBanner = document.getElementById('sliderBanner');
         let grid = document.getElementById('gridKartun');
-        
-        // Bersihkan area
+        let daftarBanner = []; // Wadah khusus untuk banner
+
+        // Bersihkan area tampilan
         if(sliderBanner) sliderBanner.innerHTML = "";
         if(grid) grid.innerHTML = "";
 
@@ -283,21 +285,18 @@
             if(baris[i].trim() === "") continue;
             let kolom = baris[i].split(",");
             
-            // Kita ambil data dari kolom 0 sampai 4
             let data = {
                 judul: kolom[0].trim(),
                 tipe: kolom[1].trim().toLowerCase(),
                 gambar: kolom[2].trim(),
                 linkKartun: kolom[3].trim(),
-                bannerUtama: kolom[4] ? kolom[4].trim() : "" // Mengambil kolom E (banner)
+                bannerUtama: kolom[4] ? kolom[4].trim() : "",
+                urutan: kolom[5] ? parseInt(kolom[5].trim()) : 99 
             };
 
-            // Jika ada link banner di kolom E, masukkan ke slider
-            if (sliderBanner && data.bannerUtama !== "") {
-                sliderBanner.innerHTML += `
-                    <a href="tonton.html?kartun=${data.linkKartun}">
-                        <img src="${data.bannerUtama}" alt="${data.judul}" style="display:none;">
-                    </a>`;
+            // Simpan ke daftar banner jika ada gambarnya
+            if (data.bannerUtama !== "") {
+                daftarBanner.push(data);
             }
 
             // Masukkan ke kartu grid
@@ -310,6 +309,17 @@
                 </a>`;
             }
         }
+        
+        // URUTKAN BANNER berdasarkan angka di kolom F (Urutan)
+        daftarBanner.sort((a, b) => a.urutan - b.urutan);
+
+        // Tampilkan banner yang sudah urut ke layar
+        daftarBanner.forEach(b => {
+            sliderBanner.innerHTML += `
+                <a href="tonton.html?kartun=${b.linkKartun}">
+                    <img src="${b.bannerUtama}" alt="${b.judul}" style="display:none;">
+                </a>`;
+        });
         
         // Jalankan slide banner jika ada isinya
         if(sliderBanner && sliderBanner.children.length > 0) {
@@ -343,5 +353,3 @@
         document.body.classList.toggle('dark-mode');
         document.getElementById('temaBtn').innerText = document.body.classList.contains('dark-mode') ? "Mod Terang" : "Mod Gelap";
     }
-    
-</script>
