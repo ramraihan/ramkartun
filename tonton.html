@@ -414,7 +414,18 @@ gambarThumbnail = "https://via.placeholder.com/150x90?text=Thumbnail";
             itemDiv.onclick = function() { bukaVideo(linkVideo, `Episod ${noEpisode}: ${judulEpisode}`); };
 
             itemDiv.innerHTML = `
-                <img src="${gambarThumbnail}" alt="Thumbnail">
+               <<img 
+               src="${gambarThumbnail}"
+               alt="Thumbnail"
+               onerror="this.onerror=null;
+               if('${linkVideo}'.includes('drive.google.com')){
+                   let match='${linkVideo}'.match(/\/file\/d\/([^\/]+)/);
+                   if(match && match[1]){
+                       this.src='https://drive.google.com/thumbnail?id='+match[1];
+                   }
+               }else{
+                   this.src='https://via.placeholder.com/150x90?text=Thumbnail';
+               }">
                 <div class="item-content">
                     <p class="item-title">Episod ${noEpisode}: ${judulEpisode}</p>
                     <span class="episode-badge">Episod ${noEpisode}</span>
