@@ -15,6 +15,7 @@
             --text-title: #ffffff;
         }
 
+        /* Kelas untuk diaktifkan apabila Mod Gelap dipilih */
         .dark-mode {
             --bg-body: #1e1e24;
             --bg-container: #2a2a32;
@@ -33,6 +34,7 @@
             transition: background-color 0.3s, color 0.3s;
         }
 
+        /* UKURAN LIST VIEW DIPERLEBAR (DIPEPETIN KE SAMPING) */
         .container {
             max-width: 100%; 
             width: 100%;
@@ -158,6 +160,7 @@
             display: none;
         }
 
+        /* UKURAN VIDEO DAN KOTAK ASLI (DIKUNCI MATI 100%) */
         .video-box {
             position: relative;
             width: 100%;
@@ -246,6 +249,7 @@
 <body>
 
     <div class="container">
+        
         <div id="halaman-senarai">
             <div class="header-box">
                 <h2>
@@ -254,8 +258,6 @@
                 </h2>
                 <button class="btn-theme" id="temaBtn-list" onclick="tukarTema()">Mod Gelap</button>
             </div>
-            
-            <img id="banner-kartun" src="" alt="Banner" style="width:100%; height:auto; margin-bottom:15px; border-radius:8px; display:none; border: 2px solid #00e5ff;">
             
             <div class="list-view" id="boxSenaraiEpisode"></div>
         </div>
@@ -281,6 +283,7 @@
                 <img src="https://i.ibb.co.com/YBp6WJv3/qris.jpg" alt="QRIS Donasi" class="donation-qr">
             </div>
         </div>
+
     </div>
 
     <script>
@@ -291,83 +294,170 @@
         const kartunID = urlParams.get('kartun') ? urlParams.get('kartun').trim().toLowerCase() : "";
 
         function parseBarisCSVAman(text) {
-            let p = RegExp('[^",\\r\\n]+|\"(?:[^"\\\\]|\\\\.)*\"|(?<=,)(?=,)|^(?=,)|(?<=,)$', 'g');
+            let p = RegExp(
+                '[^",\\r\\n]+|\"(?:[^"\\\\]|\\\\.)*\"|(?<=,)(?=,)|^(?=,)|(?<=,)$',
+                'g'
+            );
             return text.match(p) || [];
         }
 
         window.onload = function() {
-            if(!kartunID) { document.getElementById('judul-halaman-list').innerText = "KARTUN TIDAK DITEMUI"; return; }
+            if(!kartunID) {
+                document.getElementById('judul-halaman-list').innerText = "KARTUN TIDAK DITEMUI";
+                return;
+            }
 
             fetch(URL_CSV_KARTUN)
             .then(res => res.text())
             .then(kartunData => {
-                let baris = kartunData.replace(/\r/g, "").split("\n");
-                for(let i = 1; i < baris.length; i++) {
-                    let kol = parseBarisCSVAman(baris[i]);
-                    if(kol.length >= 4 && kol[3].replace(/^"|"$/g, '').trim().toLowerCase() === kartunID) {
-                        let judul = kol[0].replace(/^"|"$/g, '').trim();
-                        let linkBanner = kol[4] ? kol[4].replace(/^"|"$/g, '').trim() : "";
-                        document.getElementById('judul-halaman-list').innerText = judul;
-                        document.getElementById('judul-halaman-nonton').innerText = judul;
-                        let banner = document.getElementById('banner-kartun');
-                        if(linkBanner !== "") { banner.src = linkBanner; banner.style.display = "block"; }
-                        break;
+                let barisKartun = kartunData.replace(/\r/g, "").split("\n");
+                let judulDitemukan = "";
+                
+                for(let i = 1; i < barisKartun.length; i++) {
+                    if(barisKartun[i].trim() === "") continue;
+                    let kol = parseBarisCSVAman(barisKartun[i]);
+                    if(kol.length >= 4) {
+                        let linkKartunSheet = kol[3].replace(/^"|"$/g, '').trim().toLowerCase();
+                        if(linkKartunSheet === kartunID) {
+                            judulDitemukan = kol[0].replace(/^"|"$/g, '').trim();
+                            break;
+                        }
                     }
                 }
+
+                if(judulDitemukan !== "") {
+                    document.getElementById('judul-halaman-list').innerText = judulDitemukan;
+                    document.getElementById('judul-halaman-nonton').innerText = judulDitemukan;
+                } else {
+                    let kata = kartunID.split('-');
+                    for (let i = 0; i < kata.length; i++) {
+                        if (kata[i] === 's1' || kata[i] === 's2' || kata[i] === 's3') {
+                            kata[i] = "SEASON " + kata[i].substring(1);
+                        } else if (kata[i] === 'm1' || kata[i] === 'm2') {
+                            kata[i] = "MUSIM " + kata[i].substring(1);
+                        } else {
+                            kata[i] = kata[i].charAt(0).toUpperCase() + kata[i].slice(1);
+                        }
+                    }
+                    let namaFormatAsli = kata.join(' ');
+                    document.getElementById('judul-halaman-list').innerText = namaFormatAsli;
+                    document.getElementById('judul-halaman-nonton').innerText = namaFormatAsli;
+                }
+            })
+            .catch(() => {
+                document.getElementById('judul-halaman-list').innerText = kartunID.toUpperCase();
+                document.getElementById('judul-halaman-nonton').innerText = kartunID.toUpperCase();
             });
 
             fetch(URL_CSV_EPISODES)
-            .then(res => res.text())
-            .then(data => saringDanPaparkanEpisode(data))
-            .catch(err => console.error("Error:", err));
+            .then(response => response.text())
+            .then(data => {
+                saringDanPaparkanEpisode(data);
+            })
+            .catch(err => {
+                console.error("Gagal memuat data episode: ", err);
+                document.getElementById('boxSenaraiEpisode').innerHTML = "<p style='text-align:center;'>Gagal memuatkan episod.</p>";
+            });
         };
 
         function saringDanPaparkanEpisode(text) {
-            let baris = text.split("\n");
-            let listContainer = document.getElementById('boxSenaraiEpisode');
-            listContainer.innerHTML = ""; 
-            let ada = false;
+    let baris = text.split("\n");
+    let listContainer = document.getElementById('boxSenaraiEpisode');
+    listContainer.innerHTML = ""; 
 
-            for(let i = 1; i < baris.length; i++) {
-                if(baris[i].trim() === "") continue;
-                let k = parseBarisCSVAman(baris[i]);
-                if(k.length < 4) continue;
+    let adaEpisode = false;
 
-                if(k[0].replace(/^"|"$/g, '').trim().toLowerCase() === kartunID) {
-                    ada = true;
-                    let no = k[1].replace(/^"|"$/g, '').trim();
-                    let judul = k[2].replace(/^"|"$/g, '').trim();
-                    let link = k[3].replace(/^"|"$/g, '').trim();
-                    let thumb = k[4] ? k[4].replace(/^"|"$/g, '').trim() : "";
-                    let img = (thumb.startsWith('http')) ? thumb : "https://img.youtube.com/vi/" + link + "/0.jpg";
-                    
-                    let div = document.createElement('div');
-                    div.className = 'list-item';
-                    div.onclick = function() { bukaVideo(link, `Episod ${no}: ${judul}`); };
-                    div.innerHTML = `<img src="${img}" alt="Thumbnail"><div class="item-content"><p class="item-title">Episod ${no}: ${judul}</p><span class="episode-badge">Episod ${no}</span></div>`;
-                    listContainer.appendChild(div);
-                }
+    for(let i = 1; i < baris.length; i++) {
+        if(baris[i].trim() === "") continue;
+
+        // Memecah baris CSV
+        let kolom = parseBarisCSVAman(baris[i]);
+        if(!kolom || kolom.length < 4) continue;
+
+        let idKartunTab = kolom[0].replace(/^"|"$/g, '').trim().toLowerCase();
+        let noEpisode = kolom[1].replace(/^"|"$/g, '').trim();
+        let judulEpisode = kolom[2].replace(/^"|"$/g, '').trim();
+        let linkVideo = kolom[3].replace(/^"|"$/g, '').trim();
+        
+        // --- PERBAIKAN THUMBNAIL DIMULAI DI SINI ---
+        // Mengambil data dari kolom ke-5 (indeks 4) secara paksa
+        let linkThumbnailSheet = kolom[4] ? kolom[4].replace(/^"|"$/g, '').trim() : "";
+        
+        if(idKartunTab === kartunID) {
+            adaEpisode = true;
+            let gambarThumbnail = "";
+
+            // Jika link di kolom E ada dan dimulai dengan http, gunakan itu.
+            if (linkThumbnailSheet.toLowerCase().startsWith('http')) {
+                gambarThumbnail = linkThumbnailSheet;
+            } 
+            // Fallback ke YouTube/Google Drive jika kolom E kosong
+            else if (linkVideo.includes('drive.google.com')) {
+                let matchDrive = linkVideo.match(/\/file\/d\/([^\/]+)/) || linkVideo.match(/id=([^&]+)/);
+                gambarThumbnail = matchDrive ? "https://lh3.googleusercontent.com/u/0/d/" + matchDrive[1] : "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIThhOGE4YSI+PHBhdGggZD0iTTAgMGg0OHY0OEgweiIgZmlsbD0ibm9uZSIvPjxwYXRoIGQ9Ik0yMSAzaC0xOGMtMS4xIDAtMiAuOS0yIDh2MTJjMCAxLjEuOSAyIDIgMmgxOGMxLjEgMCAyLS45IDItMlY1YzAtMS4xLS45LTItMi0yeG0tOSA0YzEuNjYgMCAzIDEuMzQgMyAzcy0xLjM0IDMtMyAzLTMtMS4zNC0zLTMgMS4zNC0zIDMtM3ptNiAxMmgtMTJ2LTEuNmMwLTIgNC0zLjEgNi0zLjFzNiAxLjEgNiAzLjFWMTd6Ii8+PC9zdmc+";
+            } else if (linkVideo !== "") {
+                gambarThumbnail = `https://img.youtube.com/vi/${linkVideo}/0.jpg`;
             }
-            if(!ada) listContainer.innerHTML = "<p style='text-align:center;'>Belum ada episod.</p>";
-        }
 
-        function bukaVideo(link, tajuk) {
+            let itemDiv = document.createElement('div');
+            itemDiv.className = 'list-item';
+            itemDiv.onclick = function() { bukaVideo(linkVideo, `Episod ${noEpisode}: ${judulEpisode}`); };
+
+            itemDiv.innerHTML = `
+                <img src="${gambarThumbnail}" alt="Thumbnail">
+                <div class="item-content">
+                    <p class="item-title">Episod ${noEpisode}: ${judulEpisode}</p>
+                    <span class="episode-badge">Episod ${noEpisode}</span>
+                </div>
+            `;
+            listContainer.appendChild(itemDiv);
+        }
+    }
+
+    if(!adaEpisode) {
+        listContainer.innerHTML = "<p style='text-align:center;'>Belum ada episod untuk kartun ini.</p>";
+    }
+}
+
+        function bukaVideo(linkVideo, tajukVideo) {
             document.getElementById('halaman-senarai').style.display = 'none';
             document.getElementById('halaman-nonton').style.display = 'block';
-            document.getElementById('frame-video').src = link.includes('drive.google.com') ? link.replace('/view', '/preview') : "https://www.youtube.com/embed/" + link;
-            document.getElementById('tajuk-video').innerText = tajuk;
+            
+            let frameVideo = document.getElementById('frame-video');
+            let linkBersih = linkVideo.trim();
+            
+            if (linkBersih.includes('drive.google.com')) {
+                let match = linkBersih.match(/\/file\/d\/([^\/]+)/);
+                if (match && match[1]) {
+                    frameVideo.src = "https://drive.google.com/file/d/" + match[1] + "/preview";
+                } else {
+                    frameVideo.src = linkBersih;
+                }
+            } else if (linkBersih.startsWith('http://') || linkBersih.startsWith('https://')) {
+                frameVideo.src = linkBersih;
+            } else {
+                frameVideo.src = "https://www.youtube.com/embed/" + linkBersih + "?autoplay=1";
+            }
+            
+            document.getElementById('tajuk-video').innerText = tajukVideo;
         }
 
         function kembaliKeSenarai() {
             document.getElementById('halaman-senarai').style.display = 'block';
             document.getElementById('halaman-nonton').style.display = 'none';
+            document.getElementById('frame-video').src = "";
         }
 
         function tukarTema() {
-            document.body.classList.toggle('dark-mode');
-            let isDark = document.body.classList.contains('dark-mode');
-            document.getElementById('temaBtn-list').innerText = isDark ? "Mod Terang" : "Mod Gelap";
-            document.getElementById('temaBtn-nonton').innerText = isDark ? "Mod Terang" : "Mod Gelap";
+            var body = document.body;
+            var btnList = document.getElementById('temaBtn-list');
+            var btnNonton = document.getElementById('temaBtn-nonton');
+            
+            body.classList.toggle('dark-mode');
+            
+            let teksTema = body.classList.contains('dark-mode') ? "Mod Terang" : "Mod Gelap";
+            if(btnList) btnList.innerText = teksTema;
+            if(btnNonton) btnNonton.innerText = teksTema;
         }
     </script>
 </body>
