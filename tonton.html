@@ -361,76 +361,63 @@
         };
 
         function saringDanPaparkanEpisode(text) {
-            let baris = text.split("\n");
-            let listContainer = document.getElementById('boxSenaraiEpisode');
-            listContainer.innerHTML = ""; 
+    let baris = text.split("\n");
+    let listContainer = document.getElementById('boxSenaraiEpisode');
+    listContainer.innerHTML = ""; 
 
-            let adaEpisode = false;
+    let adaEpisode = false;
 
-            for(let i = 1; i < baris.length; i++) {
-                if(baris[i].trim() === "") continue;
+    for(let i = 1; i < baris.length; i++) {
+        if(baris[i].trim() === "") continue;
 
-                let kolom = parseBarisCSVAman(baris[i]);
-                if(!kolom || kolom.length < 4) continue;
+        // Memecah baris CSV
+        let kolom = parseBarisCSVAman(baris[i]);
+        if(!kolom || kolom.length < 4) continue;
 
-                let idKartunTab = kolom[0].replace(/^"|"$/g, '').trim().toLowerCase();
-                let noEpisode = kolom[1].replace(/^"|"$/g, '').trim();
-                let judulEpisode = kolom[2].replace(/^"|"$/g, '').trim();
-                let linkVideo = kolom[3].replace(/^"|"$/g, '').trim();
-                
-                // SISTEM SCANNING KUAT: Ambil teks apa pun setelah kolom ke-4 yang mengandung link gambar HTTP/HTTPS asli
-                let linkThumbnailSheet = "";
-                for(let k = 4; k < kolom.length; k++) {
-                    if(kolom[k] && (kolom[k].includes("http://") || kolom[k].includes("https://"))) {
-                        linkThumbnailSheet = kolom[k].replace(/\r/g, "").replace(/^"|"$/g, '').trim();
-                        break;
-                    }
-                }
+        let idKartunTab = kolom[0].replace(/^"|"$/g, '').trim().toLowerCase();
+        let noEpisode = kolom[1].replace(/^"|"$/g, '').trim();
+        let judulEpisode = kolom[2].replace(/^"|"$/g, '').trim();
+        let linkVideo = kolom[3].replace(/^"|"$/g, '').trim();
+        
+        // --- PERBAIKAN THUMBNAIL DIMULAI DI SINI ---
+        // Mengambil data dari kolom ke-5 (indeks 4) secara paksa
+        let linkThumbnailSheet = kolom[4] ? kolom[4].replace(/^"|"$/g, '').trim() : "";
+        
+        if(idKartunTab === kartunID) {
+            adaEpisode = true;
+            let gambarThumbnail = "";
 
-                if(idKartunTab === kartunID) {
-                    adaEpisode = true;
-                    let gambarThumbnail = "";
-
-                    // VALIDASI LINK JIKA DATA LINK DARI KOLOM E BERHASIL DITEMUKAN
-                    if (linkThumbnailSheet !== "" && linkThumbnailSheet.toLowerCase() !== "undefined") {
-                        gambarThumbnail = linkThumbnailSheet;
-                    } 
-                    // SISTEM OTOMATISASI CADANGAN JIKA KOLOM E MEMANG KOSONG
-                    else if (linkVideo.includes('drive.google.com')) {
-                        let matchDrive = linkVideo.match(/\/file\/d\/([^\/]+)/) || linkVideo.match(/id=([^&]+)/);
-                        if (matchDrive && matchDrive[1]) {
-                            gambarThumbnail = "https://lh3.googleusercontent.com/u/0/d/" + matchDrive[1];
-                        } else {
-                            gambarThumbnail = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIThhOGE4YSI+PHBhdGggZD0iTTAgMGg0OHY0OEgweiIgZmlsbD0ibm9uZSIvPjxwYXRoIGQ9Ik0yMSAzaC0xOGMtMS4xIDAtMiAuOS0yIDh2MTJjMCAxLjEuOSAyIDIgMmgxOGMxLjEgMCAyLS45IDItMlY1YzAtMS4xLS45LTItMi0yeG0tOSA0YzEuNjYgMCAzIDEuMzQgMyAzcy0xLjM0IDMtMyAzLTMtMS4zNC0zLTMgMS4zNC0zIDMtM3ptNiAxMmgtMTJ2LTEuNmMwLTIgNC0zLjEgNi0zLjFzNiAxLjEgNiAzLjFWMTd6Ii8+PC9zdmc+";
-                        }
-                    } else if (linkVideo !== "") {
-                        gambarThumbnail = `https://img.youtube.com/vi/${linkVideo}/0.jpg`;
-                    } else {
-                        gambarThumbnail = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIThhOGE4YSI+PHBhdGggZD0iTTAgMGg0OHY0OEgweiIgZmlsbD0ibm9uZSIvPjxwYXRoIGQ9Ik0yMSAzaC0xOGMtMS4xIDAtMiAuOS0yIDh2MTJjMCAxLjEuOSAyIDIgMmgxOGMxLjEgMCAyLS45IDItMlY1YzAtMS4xLS45LTItMi0yeG0tOSA0YzEuNjYgMCAzIDEuMzQgMyAzcy0xLjM0IDMtMyAzLTMtMS4zNC0zLTMgMS4zNC0zIDMtM3ptNiAxMmgtMTJ2LTEuNmMwLTIgNC0zLjEgNi0zLjFzNiAxLjEgNiAzLjFWMTd6Ii8+PC9zdmc+";
-                    }
-
-                    let itemDiv = document.createElement('div');
-                    itemDiv.className = 'list-item';
-                    
-                    itemDiv.onclick = function() {
-                        bukaVideo(linkVideo, `Episod ${noEpisode}: ${judulEpisode}`);
-                    };
-
-                    itemDiv.innerHTML = `
-                        <img src="${gambarThumbnail}" alt="Thumbnail" onerror="this.onerror=null; this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIThhOGE4YSI+PHBhdGggZD0iTTAgMGg0OHY0OEgweiIgZmlsbD0ibm9uZSIvPjxwYXRoIGQ9Ik0yMSAzaC0xOGMtMS4xIDAtMiAuOS0yIDh2MTJjMCAxLjEuOSAyIDIgMmgxOGMxLjEgMCAyLS45IDItMlY1YzAtMS4xLS45LTItMi0yeG0tOSA0YzEuNjYgMCAzIDEuMzQgMyAzcy0xLjM0IDMtMyAzLTMtMS4zNC0zLTMgMS4zNC0zIDMtM3ptNiAxMmgtMTJ2LTEuNmMwLTIgNC0zLjEgNi0zLjFzNiAxLjEgNiAzLjFWMTd6Ii8+PC9zdmc+';">
-                        <div class="item-content">
-                            <p class="item-title">Episod ${noEpisode}: ${judulEpisode}</p>
-                            <span class="episode-badge">Episod ${noEpisode}</span>
-                        </div>
-                    `;
-                    listContainer.appendChild(itemDiv);
-                }
+            // Jika link di kolom E ada dan dimulai dengan http, gunakan itu.
+            if (linkThumbnailSheet.toLowerCase().startsWith('http')) {
+                gambarThumbnail = linkThumbnailSheet;
+            } 
+            // Fallback ke YouTube/Google Drive jika kolom E kosong
+            else if (linkVideo.includes('drive.google.com')) {
+                let matchDrive = linkVideo.match(/\/file\/d\/([^\/]+)/) || linkVideo.match(/id=([^&]+)/);
+                gambarThumbnail = matchDrive ? "https://lh3.googleusercontent.com/u/0/d/" + matchDrive[1] : "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIThhOGE4YSI+PHBhdGggZD0iTTAgMGg0OHY0OEgweiIgZmlsbD0ibm9uZSIvPjxwYXRoIGQ9Ik0yMSAzaC0xOGMtMS4xIDAtMiAuOS0yIDh2MTJjMCAxLjEuOSAyIDIgMmgxOGMxLjEgMCAyLS45IDItMlY1YzAtMS4xLS45LTItMi0yeG0tOSA0YzEuNjYgMCAzIDEuMzQgMyAzcy0xLjM0IDMtMyAzLTMtMS4zNC0zLTMgMS4zNC0zIDMtM3ptNiAxMmgtMTJ2LTEuNmMwLTIgNC0zLjEgNi0zLjFzNiAxLjEgNiAzLjFWMTd6Ii8+PC9zdmc+";
+            } else if (linkVideo !== "") {
+                gambarThumbnail = `https://img.youtube.com/vi/${linkVideo}/0.jpg`;
             }
 
-            if(!adaEpisode) {
-                listContainer.innerHTML = "<p style='text-align:center; color:var(--text-muted);'>Belum ada episod untuk kartun ini.</p>";
-            }
+            let itemDiv = document.createElement('div');
+            itemDiv.className = 'list-item';
+            itemDiv.onclick = function() { bukaVideo(linkVideo, `Episod ${noEpisode}: ${judulEpisode}`); };
+
+            itemDiv.innerHTML = `
+                <img src="${gambarThumbnail}" alt="Thumbnail">
+                <div class="item-content">
+                    <p class="item-title">Episod ${noEpisode}: ${judulEpisode}</p>
+                    <span class="episode-badge">Episod ${noEpisode}</span>
+                </div>
+            `;
+            listContainer.appendChild(itemDiv);
         }
+    }
+
+    if(!adaEpisode) {
+        listContainer.innerHTML = "<p style='text-align:center;'>Belum ada episod untuk kartun ini.</p>";
+    }
+}
 
         function bukaVideo(linkVideo, tajukVideo) {
             document.getElementById('halaman-senarai').style.display = 'none';
