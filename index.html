@@ -246,9 +246,7 @@
     <div class="nav-menu">
         </div>
 </div>
-            
-            <div class="banner-slider" id="sliderBanner"></div>
-            <div class="nav-menu">
+
                 <button class="nav-item active" onclick="tukarKategori('semua', this)">Semua</button>
                 <button class="nav-item" onclick="tukarKategori('series', this)">Series</button>
                 <button class="nav-item" onclick="tukarKategori('movie', this)">Movie</button>
@@ -263,162 +261,106 @@
         <div class="card-grid" id="gridKartun"></div>
     </div>
 
-    <script>
-        const URL_CSV_KARTUN = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRgIbfZERZ-9WhUrdYdNdJ2_8qNsyC0OHNnKt9NSn8m9GVuQhvgMovQOUPtSd_6Fetus0adAxUu6G4O/pub?gid=0&single=true&output=csv";
+        <script>
+    const URL_CSV_KARTUN = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRgIbfZERZ-9WhUrdYdNdJ2_8qNsyC0OHNnKt9NSn8m9GVuQhvgMovQOUPtSd_6Fetus0adAxUu6G4O/pub?gid=0&single=true&output=csv";
+    var kategoriSemasa = "semua";
 
-        var kategoriSemasa = "semua";
+    window.onload = function() {
+        fetch(URL_CSV_KARTUN)
+        .then(response => response.text())
+        .then(data => parsedataCSV(data))
+        .catch(err => console.error("Gagal memuat data: ", err));
+    };
 
-        window.onload = function() {
-            fetch(URL_CSV_KARTUN)
-            .then(response => response.text())
-            .then(data => {
-                parsedataCSV(data);
-            })
-            .catch(err => console.error("Gagal memuat data Google Sheets: ", err));
-        };
+    function parsedataCSV(text) {
+        let baris = text.split("\n");
+        let dataKartun = [];
+        let sliderBanner = document.getElementById('sliderBanner');
+        let grid = document.getElementById('gridKartun');
 
-                function parsedataCSV(text) {
-    let baris = text.split("\n");
-    let dataKartun = [];
-    let sliderBanner = document.getElementById('sliderBanner');
-    let grid = document.getElementById('gridKartun');
+        if(sliderBanner) sliderBanner.innerHTML = "";
+        if(grid) grid.innerHTML = "";
 
-    // 1. Bersihkan tampilan awal
-    if(sliderBanner) sliderBanner.innerHTML = "";
-    if(grid) grid.innerHTML = "";
+        for(let i = 1; i < baris.length; i++) {
+            if(baris[i].trim() === "") continue;
+            let kolom = baris[i].split(",");
+            if(kolom.length < 4) continue;
+            
+            let data = {
+                judul: kolom[0].trim(),
+                tipe: kolom[1].trim().toLowerCase(),
+                gambar: kolom[2].trim(),
+                linkKartun: kolom[3].trim(),
+                bannerUtama: kolom[4] ? kolom[4].trim() : ""
+            };
+            dataKartun.push(data);
 
-    // 2. Ambil data
-    for(let i = 1; i < baris.length; i++) {
-        if(baris[i].trim() === "") continue;
-        let kolom = baris[i].split(",");
-        if(kolom.length < 4) continue; // Pastikan kolom minimal ada 4
+            if (sliderBanner && data.bannerUtama !== "") {
+                sliderBanner.innerHTML += `
+                    <a href="tonton.html?kartun=${data.linkKartun}">
+                        <img src="${data.bannerUtama}" alt="${data.judul}" style="display:none;">
+                    </a>`;
+            }
+        }
+
+        dataKartun.sort((a, b) => a.judul.localeCompare(b.judul));
         
-        let data = {
-            judul: kolom[0].trim(),
-            tipe: kolom[1].trim().toLowerCase(),
-            gambar: kolom[2].trim(),
-            linkKartun: kolom[3].trim(),
-            bannerUtama: kolom[4] ? kolom[4].trim() : ""
-        };
-        dataKartun.push(data);
-
-        // 3. Masukkan ke slider
-        if (sliderBanner && data.bannerUtama !== "") {
-            sliderBanner.innerHTML += `
-                <a href="tonton.html?kartun=${data.linkKartun}">
-                    <img src="${data.bannerUtama}" alt="${data.judul}" style="display:none;">
-                </a>`;
-        }
-    }
-
-    // 4. Urutkan dan tampilkan ID Card
-    dataKartun.sort((a, b) => a.judul.localeCompare(b.judul));
-    dataKartun.forEach(kartun => {
-        if(grid) {
-            grid.innerHTML += `
-                <a href="tonton.html?kartun=${kartun.linkKartun}" class="movie-item" data-type="${kartun.tipe}">
-                    <div class="id-card"><img src="${kartun.gambar}" alt="${kartun.judul}"></div>
-                    <p class="card-title">${kartun.judul}</p>
-                    <span class="card-type">${kartun.tipe}</span>
-                </a>
-            `;
-        }
-    });
-
-    // 5. Jalankan slider jika ada gambarnya
-    if(sliderBanner && sliderBanner.children.length > 0) {
-        sliderBanner.children[0].querySelector('img').style.display = "block";
-        tampilkanBanner();
-    }
-}
-
-
-    // Urutkan ID Card A-Z
-    dataKartun.sort((a, b) => a.judul.localeCompare(b.judul));
-
-    // Tampilkan ID Card
-    let grid = document.getElementById('gridKartun');
-    grid.innerHTML = "";
-    dataKartun.forEach(kartun => {
-        grid.innerHTML += `
-            <a href="tonton.html?kartun=${kartun.linkKartun}" class="movie-item" data-type="${kartun.tipe}">
-                <div class="id-card">
-                    <img src="${kartun.gambar}" alt="${kartun.judul}">
-                </div>
-                <p class="card-title">${kartun.judul}</p>
-                <span class="card-type">${kartun.tipe}</span>
-            </a>
-        `;
-    });
-
-    // Jalankan animasi slider
-    tampilkanBanner();
-}
-
-// Tambahan fungsi untuk slidernya
-let slideIndex = 0;
-function tampilkanBanner() {
-    let slides = document.querySelectorAll("#sliderBanner img");
-    if(slides.length === 0) return; // Kalau tidak ada banner, jangan jalan
-    
-    for (let i = 0; i < slides.length; i++) {
-        slides[i].style.display = "none";
-    }
-    slideIndex++;
-    if (slideIndex > slides.length) { slideIndex = 1 }
-    slides[slideIndex - 1].style.display = "block";
-    setTimeout(tampilkanBanner, 3000); // Geser tiap 3 detik
-}
-
-        function tukarKategori(kategori, elemenButang) {
-            var butangKategori = document.getElementsByClassName('nav-item');
-            for (var i = 0; i < butangKategori.length; i++) {
-                butangKategori[i].classList.remove('active');
+        dataKartun.forEach(kartun => {
+            if(grid) {
+                grid.innerHTML += `
+                    <a href="tonton.html?kartun=${kartun.linkKartun}" class="movie-item" data-type="${kartun.tipe}">
+                        <div class="id-card"><img src="${kartun.gambar}" alt="${kartun.judul}"></div>
+                        <p class="card-title">${kartun.judul}</p>
+                        <span class="card-type">${kartun.tipe}</span>
+                    </a>
+                `;
             }
-            elemenButang.classList.add('active');
+        });
 
-            kategoriSemasa = kategori;
-            jalankanPenyaringan();
+        if(sliderBanner && sliderBanner.children.length > 0) {
+            sliderBanner.children[0].querySelector('img').style.display = "block";
+            tampilkanBanner();
         }
+    }
 
-        function jalankanPenyaringan() {
-            var input = document.getElementById('cariKartun');
-            var filterCarian = input.value.toLowerCase();
-            var grid = document.getElementById('gridKartun');
-            var items = grid.getElementsByClassName('movie-item');
+    let slideIndex = 0;
+    function tampilkanBanner() {
+        let slides = document.querySelectorAll("#sliderBanner img");
+        if(slides.length === 0) return;
+        for (let i = 0; i < slides.length; i++) { slides[i].style.display = "none"; }
+        slideIndex++;
+        if (slideIndex > slides.length) { slideIndex = 1 }
+        slides[slideIndex - 1].style.display = "block";
+        setTimeout(tampilkanBanner, 3000);
+    }
 
-            for (var i = 0; i < items.length; i++) {
-                var title = items[i].getElementsByClassName('card-title')[0];
-                var tipeKartun = items[i].getAttribute('data-type');
-                
-                var teksCocok = false;
-                var kategoriCocok = false;
+    function tukarKategori(kategori, elemenButang) {
+        var butangKategori = document.getElementsByClassName('nav-item');
+        for (var i = 0; i < butangKategori.length; i++) { butangKategori[i].classList.remove('active'); }
+        elemenButang.classList.add('active');
+        kategoriSemasa = kategori;
+        jalankanPenyaringan();
+    }
 
-                if (title) {
-                    var textValue = title.textContent || title.innerText;
-                    if (textValue.toLowerCase().indexOf(filterCarian) > -1) {
-                        teksCocok = true;
-                    }
-                }
-
-                if (kategoriSemasa === "semua" || tipeKartun === kategoriSemasa) {
-                    kategoriCocok = true;
-                }
-
-                if (teksCocok && kategoriCocok) {
-                    items[i].style.display = "";
-                } else {
-                    items[i].style.display = "none";
-                }
+    function jalankanPenyaringan() {
+        var input = document.getElementById('cariKartun');
+        var filterCarian = input.value.toLowerCase();
+        var grid = document.getElementById('gridKartun');
+        var items = grid.getElementsByClassName('movie-item');
+        for (var i = 0; i < items.length; i++) {
+            var title = items[i].getElementsByClassName('card-title')[0];
+            var tipeKartun = items[i].getAttribute('data-type');
+            if (title.textContent.toLowerCase().indexOf(filterCarian) > -1 && (kategoriSemasa === "semua" || tipeKartun === kategoriSemasa)) {
+                items[i].style.display = "";
+            } else {
+                items[i].style.display = "none";
             }
         }
+    }
 
-        function tukarTema() {
-            var body = document.body;
-            var btn = document.getElementById('temaBtn');
-            body.classList.toggle('dark-mode');
-            btn.innerText = body.classList.contains('dark-mode') ? "Mod Terang" : "Mod Gelap";
-        }
-    </script>
-</body>
-</html>
+    function tukarTema() {
+        var body = document.body;
+        var btn = document.getElementById('temaBtn');
+        body.classList.toggle('dark-mode');
+        btn.innerText = body.classList.contains('dark-mode') ? "Mod Terang" : "Mod Gelap";
+    }
