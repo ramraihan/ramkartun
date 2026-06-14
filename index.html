@@ -210,36 +210,16 @@
             .card-title {
                 font-size: 13px;
             }
-            
-            .banner-slider {
-    width: 100%;
-    overflow: hidden;
-    margin-bottom: 20px;
-    border-radius: 10px;
-    height: 200px; /* Kalau ini tidak ada, banner jadi tidak kelihatan */
-    background-color: transparent;
-}
-
-.banner-slider img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: none;
-}
-
-.banner-slider a {
-    display: block;
-    width: 100%;
-    height: 100%;
-}
-
         }
     </style>
 </head>
 <body>
+
     <div class="container">
+        
         <div class="header-box">
             <h2>Selamat Datang di Nonton Kartun</h2>
+            
             <div class="nav-menu">
                 <button class="nav-item active" onclick="tukarKategori('semua', this)">Semua</button>
                 <button class="nav-item" onclick="tukarKategori('series', this)">Series</button>
@@ -248,8 +228,6 @@
             </div>
         </div>
 
-        <div class="banner-slider" id="sliderBanner"></div>
-
         <div class="search-container">
             <input type="text" id="cariKartun" class="search-box" placeholder="Cari nama kartun di sini..." onkeyup="jalankanPenyaringan()">
         </div>
@@ -257,99 +235,96 @@
         <div class="card-grid" id="gridKartun"></div>
     </div>
 
-        <script>
-    const URL_CSV_KARTUN = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRgIbfZERZ-9WhUrdYdNdJ2_8qNsyC0OHNnKt9NSn8m9GVuQhvgMovQOUPtSd_6Fetus0adAxUu6G4O/pub?gid=0&single=true&output=csv";
-    var kategoriSemasa = "semua";
+    <script>
+        const URL_CSV_KARTUN = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRgIbfZERZ-9WhUrdYdNdJ2_8qNsyC0OHNnKt9NSn8m9GVuQhvgMovQOUPtSd_6Fetus0adAxUu6G4O/pub?gid=0&single=true&output=csv";
 
-    // 1. Jalankan saat halaman dimuat
-    window.onload = function() {
-        fetch(URL_CSV_KARTUN)
-        .then(response => response.text())
-        .then(data => parsedataCSV(data))
-        .catch(err => console.error("Gagal memuat data: ", err));
-    };
+        var kategoriSemasa = "semua";
 
-    // 2. Fungsi Utama untuk memproses data
-            
-    function parsedataCSV(text) {
-        let baris = text.split("\n");
-        let sliderBanner = document.getElementById('sliderBanner');
-        let grid = document.getElementById('gridKartun');
-        let daftarBanner = []; // Wadah khusus untuk banner
+        window.onload = function() {
+            fetch(URL_CSV_KARTUN)
+            .then(response => response.text())
+            .then(data => {
+                parsedataCSV(data);
+            })
+            .catch(err => console.error("Gagal memuat data Google Sheets: ", err));
+        };
 
-        // Bersihkan area tampilan
-        if(sliderBanner) sliderBanner.innerHTML = "";
-        if(grid) grid.innerHTML = "";
+        function parsedataCSV(text) {
+            let baris = text.split("\n");
+            let grid = document.getElementById('gridKartun');
+            grid.innerHTML = ""; 
 
-        for(let i = 1; i < baris.length; i++) {
-            if(baris[i].trim() === "") continue;
-            let kolom = baris[i].split(",");
-            
-            let data = {
-                judul: kolom[0].trim(),
-                tipe: kolom[1].trim().toLowerCase(),
-                gambar: kolom[2].trim(),
-                linkKartun: kolom[3].trim(),
-                bannerUtama: kolom[4] ? kolom[4].trim() : "",
-                urutan: kolom[5] ? parseInt(kolom[5].trim()) : 99 
-            };
+            for(let i = 1; i < baris.length; i++) {
+                if(baris[i].trim() === "") continue;
+                
+                let kolom = baris[i].split(",");
+                let judul = kolom[0].trim();
+                let tipe = kolom[1].trim().toLowerCase();
+                let gambar = kolom[2].trim();
+                let linkKartun = kolom[3].trim();
 
-            // Simpan ke daftar banner jika ada gambarnya
-            if (data.bannerUtama !== "") {
-                daftarBanner.push(data);
-            }
-
-            // Masukkan ke kartu grid
-            if(grid) {
-                grid.innerHTML += `
-                <a href="tonton.html?kartun=${data.linkKartun}" class="movie-item" data-type="${data.tipe}">
-                    <div class="id-card"><img src="${data.gambar}" alt="${data.judul}"></div>
-                    <p class="card-title">${data.judul}</p>
-                    <span class="card-type">${data.tipe}</span>
-                </a>`;
+                let htmlCard = `
+                    <a href="tonton.html?kartun=${linkKartun}" class="movie-item" data-type="${tipe}">
+                        <div class="id-card">
+                            <img src="${gambar}" alt="${judul}">
+                        </div>
+                        <p class="card-title">${judul}</p>
+                        <span class="card-type">${tipe}</span>
+                    </a>
+                `;
+                grid.innerHTML += htmlCard;
             }
         }
-        
-        // URUTKAN BANNER berdasarkan angka di kolom F (Urutan)
-        daftarBanner.sort((a, b) => a.urutan - b.urutan);
 
-        // Tampilkan banner yang sudah urut ke layar
-        daftarBanner.forEach(b => {
-            sliderBanner.innerHTML += `
-                <a href="tonton.html?kartun=${b.linkKartun}">
-                    <img src="${b.bannerUtama}" alt="${b.judul}" style="display:none;">
-                </a>`;
-        });
-        
-        // Jalankan slide banner jika ada isinya
-        if(sliderBanner && sliderBanner.children.length > 0) {
-            tampilkanBanner(); 
+        function tukarKategori(kategori, elemenButang) {
+            var butangKategori = document.getElementsByClassName('nav-item');
+            for (var i = 0; i < butangKategori.length; i++) {
+                butangKategori[i].classList.remove('active');
+            }
+            elemenButang.classList.add('active');
+
+            kategoriSemasa = kategori;
+            jalankanPenyaringan();
         }
-    }
 
-    // 3. Fungsi Filter Kategori
-    function tukarKategori(kategori, elemen) {
-        document.querySelectorAll('.nav-item').forEach(btn => btn.classList.remove('active'));
-        elemen.classList.add('active');
-        kategoriSemasa = kategori;
-        jalankanPenyaringan();
-    }
+        function jalankanPenyaringan() {
+            var input = document.getElementById('cariKartun');
+            var filterCarian = input.value.toLowerCase();
+            var grid = document.getElementById('gridKartun');
+            var items = grid.getElementsByClassName('movie-item');
 
-    // 4. Fungsi Pencarian & Filter
-    function jalankanPenyaringan() {
-        let filter = document.getElementById('cariKartun').value.toLowerCase();
-        let items = document.getElementsByClassName('movie-item');
-        for (let item of items) {
-            let title = item.querySelector('.card-title').textContent.toLowerCase();
-            let type = item.getAttribute('data-type');
-            let matchText = title.includes(filter);
-            let matchCat = (kategoriSemasa === "semua" || type === kategoriSemasa);
-            item.style.display = (matchText && matchCat) ? "" : "none";
+            for (var i = 0; i < items.length; i++) {
+                var title = items[i].getElementsByClassName('card-title')[0];
+                var tipeKartun = items[i].getAttribute('data-type');
+                
+                var teksCocok = false;
+                var kategoriCocok = false;
+
+                if (title) {
+                    var textValue = title.textContent || title.innerText;
+                    if (textValue.toLowerCase().indexOf(filterCarian) > -1) {
+                        teksCocok = true;
+                    }
+                }
+
+                if (kategoriSemasa === "semua" || tipeKartun === kategoriSemasa) {
+                    kategoriCocok = true;
+                }
+
+                if (teksCocok && kategoriCocok) {
+                    items[i].style.display = "";
+                } else {
+                    items[i].style.display = "none";
+                }
+            }
         }
-    }
 
-    // 5. Fungsi Tema
-    function tukarTema() {
-        document.body.classList.toggle('dark-mode');
-        document.getElementById('temaBtn').innerText = document.body.classList.contains('dark-mode') ? "Mod Terang" : "Mod Gelap";
-    }
+        function tukarTema() {
+            var body = document.body;
+            var btn = document.getElementById('temaBtn');
+            body.classList.toggle('dark-mode');
+            btn.innerText = body.classList.contains('dark-mode') ? "Mod Terang" : "Mod Gelap";
+        }
+    </script>
+</body>
+</html>
