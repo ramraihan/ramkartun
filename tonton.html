@@ -244,6 +244,16 @@
             background: #00e5ff;
             color: #1e1e24;
         }
+        
+        #banner-kartun {
+    width: 100%;
+    height: auto;
+    margin-bottom: 15px;
+    border-radius: 8px;
+    display: none;
+    border: 2px solid #00e5ff;
+}
+
     </style>
 </head>
 <body>
@@ -251,6 +261,7 @@
     <div class="container">
         
         <div id="halaman-senarai">
+        <img id="banner-kartun" src="" alt="Banner">
             <div class="header-box">
                 <h2>
                     <button class="btn-close" onclick="history.back()">✕</button>
@@ -318,10 +329,20 @@
                     let kol = parseBarisCSVAman(barisKartun[i]);
                     if(kol.length >= 4) {
                         let linkKartunSheet = kol[3].replace(/^"|"$/g, '').trim().toLowerCase();
-                        if(linkKartunSheet === kartunID) {
-                            judulDitemukan = kol[0].replace(/^"|"$/g, '').trim();
-                            break;
-                        }
+                                        if(linkKartunSheet === kartunID) {
+                    judulDitemukan = kol[0].replace(/^"|"$/g, '').trim();
+
+                    // Ini bagian banner
+                    let linkBanner = kol[2] ? kol[2].replace(/^"|"$/g, '').trim() : "";
+                    let banner = document.getElementById('banner-kartun');
+                    if(linkBanner !== "") {
+                        banner.src = linkBanner;
+                        banner.style.display = "block";
+                    }
+                    
+                    break;
+                }
+
                     }
                 }
 
