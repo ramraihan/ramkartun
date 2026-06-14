@@ -236,23 +236,18 @@
     </style>
 </head>
 <body>
-
     <div class="container">
-        
         <div class="header-box">
-    <h2>Selamat Datang di Nonton Kartun</h2>
-    <div class="banner-slider" id="sliderBanner"></div> 
-
-    <div class="nav-menu">
-        </div>
-</div>
-
+            <h2>Selamat Datang di Nonton Kartun</h2>
+            <div class="nav-menu">
                 <button class="nav-item active" onclick="tukarKategori('semua', this)">Semua</button>
                 <button class="nav-item" onclick="tukarKategori('series', this)">Series</button>
                 <button class="nav-item" onclick="tukarKategori('movie', this)">Movie</button>
                 <button class="btn-theme" id="temaBtn" onclick="tukarTema()">Mod Gelap</button>
             </div>
         </div>
+
+        <div class="banner-slider" id="sliderBanner"></div>
 
         <div class="search-container">
             <input type="text" id="cariKartun" class="search-box" placeholder="Cari nama kartun di sini..." onkeyup="jalankanPenyaringan()">
