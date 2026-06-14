@@ -294,6 +294,9 @@
                 urutan: kolom[5] ? parseInt(kolom[5].trim()) : 99 
             };
 
+// Di dalam loop for (setelah let data = {...})
+console.log("Membaca:", data.judul, "Banner:", data.bannerUtama);
+
             // Simpan ke daftar banner jika ada gambarnya
             if (data.bannerUtama !== "") {
                 daftarBanner.push(data);
