@@ -249,31 +249,42 @@
             .catch(err => console.error("Gagal memuat data Google Sheets: ", err));
         };
 
-        function parsedataCSV(text) {
+                function parsedataCSV(text) {
             let baris = text.split("\n");
-            let grid = document.getElementById('gridKartun');
-            grid.innerHTML = ""; 
+            let dataSemuaKartun = []; // Kita buat wadah penampung
 
+            // 1. Kumpulkan semua data ke dalam daftar (array)
             for(let i = 1; i < baris.length; i++) {
                 if(baris[i].trim() === "") continue;
                 
                 let kolom = baris[i].split(",");
-                let judul = kolom[0].trim();
-                let tipe = kolom[1].trim().toLowerCase();
-                let gambar = kolom[2].trim();
-                let linkKartun = kolom[3].trim();
+                dataSemuaKartun.push({
+                    judul: kolom[0].trim(),
+                    tipe: kolom[1].trim().toLowerCase(),
+                    gambar: kolom[2].trim(),
+                    linkKartun: kolom[3].trim()
+                });
+            }
 
+            // 2. Urutkan berdasarkan judul (A-Z)
+            dataSemuaKartun.sort((a, b) => a.judul.localeCompare(b.judul));
+
+            // 3. Baru tampilkan ke layar
+            let grid = document.getElementById('gridKartun');
+            grid.innerHTML = ""; 
+
+            dataSemuaKartun.forEach(kartun => {
                 let htmlCard = `
-                    <a href="tonton.html?kartun=${linkKartun}" class="movie-item" data-type="${tipe}">
+                    <a href="tonton.html?kartun=${kartun.linkKartun}" class="movie-item" data-type="${kartun.tipe}">
                         <div class="id-card">
-                            <img src="${gambar}" alt="${judul}">
+                            <img src="${kartun.gambar}" alt="${kartun.judul}">
                         </div>
-                        <p class="card-title">${judul}</p>
-                        <span class="card-type">${tipe}</span>
+                        <p class="card-title">${kartun.judul}</p>
+                        <span class="card-type">${kartun.tipe}</span>
                     </a>
                 `;
                 grid.innerHTML += htmlCard;
-            }
+            });
         }
 
         function tukarKategori(kategori, elemenButang) {
