@@ -210,6 +210,22 @@
             .card-title {
                 font-size: 13px;
             }
+            
+            .banner-slider {
+    width: 100%;
+    overflow: hidden;
+    margin-top: 15px;
+    border-radius: 10px;
+    position: relative;
+    height: 200px; /* Sesuaikan tingginya */
+}
+
+.banner-slider img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: none; /* Sembunyikan dulu */
+}
         }
     </style>
 </head>
@@ -220,6 +236,7 @@
         <div class="header-box">
             <h2>Selamat Datang di Nonton Kartun</h2>
             
+            <div class="banner-slider" id="sliderBanner"></div>
             <div class="nav-menu">
                 <button class="nav-item active" onclick="tukarKategori('semua', this)">Semua</button>
                 <button class="nav-item" onclick="tukarKategori('series', this)">Series</button>
@@ -250,42 +267,66 @@
         };
 
                 function parsedataCSV(text) {
-            let baris = text.split("\n");
-            let dataSemuaKartun = []; // Kita buat wadah penampung
+    let baris = text.split("\n");
+    let dataKartun = [];
+    let sliderBanner = document.getElementById('sliderBanner');
+    sliderBanner.innerHTML = ""; // Bersihkan slider lama
 
-            // 1. Kumpulkan semua data ke dalam daftar (array)
-            for(let i = 1; i < baris.length; i++) {
-                if(baris[i].trim() === "") continue;
-                
-                let kolom = baris[i].split(",");
-                dataSemuaKartun.push({
-                    judul: kolom[0].trim(),
-                    tipe: kolom[1].trim().toLowerCase(),
-                    gambar: kolom[2].trim(),
-                    linkKartun: kolom[3].trim()
-                });
-            }
+    for(let i = 1; i < baris.length; i++) {
+        if(baris[i].trim() === "") continue;
+        
+        let kolom = baris[i].split(",");
+        let data = {
+            judul: kolom[0].trim(),
+            tipe: kolom[1].trim().toLowerCase(),
+            gambar: kolom[2].trim(),
+            linkKartun: kolom[3].trim(),
+            bannerUtama: kolom[4] ? kolom[4].trim() : "" // Ambil data banner dari kolom ke-5
+        };
+        dataKartun.push(data);
 
-            // 2. Urutkan berdasarkan judul (A-Z)
-            dataSemuaKartun.sort((a, b) => a.judul.localeCompare(b.judul));
-
-            // 3. Baru tampilkan ke layar
-            let grid = document.getElementById('gridKartun');
-            grid.innerHTML = ""; 
-
-            dataSemuaKartun.forEach(kartun => {
-                let htmlCard = `
-                    <a href="tonton.html?kartun=${kartun.linkKartun}" class="movie-item" data-type="${kartun.tipe}">
-                        <div class="id-card">
-                            <img src="${kartun.gambar}" alt="${kartun.judul}">
-                        </div>
-                        <p class="card-title">${kartun.judul}</p>
-                        <span class="card-type">${kartun.tipe}</span>
-                    </a>
-                `;
-                grid.innerHTML += htmlCard;
-            });
+        // Tambahkan ke Slider jika ada link bannernya
+        if (data.bannerUtama !== "") {
+            sliderBanner.innerHTML += `<img src="${data.bannerUtama}" alt="${data.judul}">`;
         }
+    }
+
+    // Urutkan ID Card A-Z
+    dataKartun.sort((a, b) => a.judul.localeCompare(b.judul));
+
+    // Tampilkan ID Card
+    let grid = document.getElementById('gridKartun');
+    grid.innerHTML = "";
+    dataKartun.forEach(kartun => {
+        grid.innerHTML += `
+            <a href="tonton.html?kartun=${kartun.linkKartun}" class="movie-item" data-type="${kartun.tipe}">
+                <div class="id-card">
+                    <img src="${kartun.gambar}" alt="${kartun.judul}">
+                </div>
+                <p class="card-title">${kartun.judul}</p>
+                <span class="card-type">${kartun.tipe}</span>
+            </a>
+        `;
+    });
+
+    // Jalankan animasi slider
+    tampilkanBanner();
+}
+
+// Tambahan fungsi untuk slidernya
+let slideIndex = 0;
+function tampilkanBanner() {
+    let slides = document.querySelectorAll("#sliderBanner img");
+    if(slides.length === 0) return; // Kalau tidak ada banner, jangan jalan
+    
+    for (let i = 0; i < slides.length; i++) {
+        slides[i].style.display = "none";
+    }
+    slideIndex++;
+    if (slideIndex > slides.length) { slideIndex = 1 }
+    slides[slideIndex - 1].style.display = "block";
+    setTimeout(tampilkanBanner, 3000); // Geser tiap 3 detik
+}
 
         function tukarKategori(kategori, elemenButang) {
             var butangKategori = document.getElementsByClassName('nav-item');
