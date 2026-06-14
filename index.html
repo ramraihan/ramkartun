@@ -226,6 +226,13 @@
     object-fit: cover;
     display: none; /* Sembunyikan dulu */
 }
+
+.banner-slider a {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
         }
     </style>
 </head>
@@ -286,10 +293,12 @@
         dataKartun.push(data);
 
         // Tambahkan ke Slider jika ada link bannernya
-        if (data.bannerUtama !== "") {
-            sliderBanner.innerHTML += `<img src="${data.bannerUtama}" alt="${data.judul}">`;
+                if (data.bannerUtama !== "") {
+            sliderBanner.innerHTML += `
+                <a href="tonton.html?kartun=${data.linkKartun}">
+                    <img src="${data.bannerUtama}" alt="${data.judul}">
+                </a>`;
         }
-    }
 
     // Urutkan ID Card A-Z
     dataKartun.sort((a, b) => a.judul.localeCompare(b.judul));
