@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Selamat Datang di Nonton Kartun</title>
     <style>
-        /* === SISTEM TEMA WARNA (DEFAULT: MOD TERANG) === */
         :root {
             --bg-body: #f4f4f9;
             --bg-container: #ffffff;
@@ -16,7 +15,6 @@
             --bg-search: #ffffff;
         }
 
-        /* Mod Gelap khas aplikasi streaming */
         .dark-mode {
             --bg-body: #0c111b; 
             --bg-container: #141a28;
@@ -27,213 +25,22 @@
             --bg-search: #1f273a;
         }
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-body);
-            color: var(--text-main);
-            margin: 0;
-            padding: 10px; /* Dioptimalkan agar lebih rapat ke tepi layar gadget */
-            transition: background-color 0.3s, color 0.3s;
-        }
-
-        .container {
-            max-width: 1000px; /* Ukuran kontainer yang pas untuk menampung 3 kolom besar */
-            margin: 0 auto;
-            background: var(--bg-container);
-            border-radius: 12px;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-            padding: 18px;
-            border-top: 5px solid #00e5ff; 
-            position: relative;
-            transition: background-color 0.3s;
-        }
-
-        .header-box {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 20px;
-            margin-bottom: 30px;
-            border-bottom: 2px solid var(--border-card);
-            padding-bottom: 15px;
-        }
-
-        h2 {
-            text-align: left;
-            color: #00e5ff; 
-            margin: 0;
-            font-size: clamp(16px, 4vw, 24px);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            word-break: break-word;
-            flex: 1;
-        }
-
-        .nav-menu {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .nav-item {
-            text-decoration: none;
-            color: var(--text-main);
-            font-size: 13px;
-            font-weight: bold;
-            padding: 6px 14px;
-            border-radius: 20px;
-            border: 1px solid transparent;
-            transition: all 0.2s;
-            cursor: pointer;
-            background: transparent;
-        }
-
-        .nav-item.active, .nav-item:hover {
-            border-color: #00e5ff;
-            color: #00e5ff;
-            background: var(--bg-card);
-        }
-
-        .search-container {
-            margin-bottom: 25px;
-            width: 100%;
-        }
-
-        .search-box {
-            width: 100%;
-            padding: 12px 20px;
-            font-size: 15px;
-            border: 1px solid var(--border-card);
-            border-radius: 8px;
-            background-color: var(--bg-search);
-            color: var(--text-main);
-            box-sizing: border-box;
-            outline: none;
-            transition: all 0.3s ease;
-        }
-
-        .search-box:focus {
-            border-color: #00e5ff;
-            box-shadow: 0 0 8px rgba(0, 229, 255, 0.3);
-        }
-
-        /* PERUBAHAN: Dipastikan mengunci layout tetap 3 kolom ke samping dengan jarak gap yang ideal */
-        .card-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr); 
-            gap: 18px 12px; 
-        }
-
-        .movie-item {
-            display: flex;
-            flex-direction: column;
-            text-decoration: none;
-            cursor: pointer;
-        }
-
-        .id-card {
-            width: 100%;
-            padding-top: 100%; /* Rasio kotak sempurna 1:1, membesar mengikuti ruang 3 kolom */
-            position: relative;
-            background: var(--bg-card);
-            border: 1px solid var(--border-card);
-            border-radius: 8px;
-            overflow: hidden;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-        }
-
-        .id-card img {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .movie-item:hover .id-card {
-            border-color: #00e5ff;
-            transform: scale(1.03);
-            box-shadow: 0 10px 20px rgba(0, 229, 255, 0.25);
-        }
-
-        .card-title {
-            font-size: 14px;
-            font-weight: bold;
-            color: var(--text-main);
-            margin: 8px 0 2px 0;
-            line-height: 1.3;
-            transition: color 0.2s;
-        }
-
-        .movie-item:hover .card-title {
-            color: #00e5ff; 
-        }
-
-        .card-type {
-            font-size: 11px;
-            color: var(--text-muted);
-            font-weight: 500;
-            text-transform: uppercase;
-        }
-
-        .btn-theme {
-            background: var(--bg-card);
-            border: 1px solid #00e5ff;
-            color: #00e5ff;
-            padding: 6px 12px;
-            font-size: 11px;
-            font-weight: bold;
-            border-radius: 20px;
-            cursor: pointer;
-            transition: all 0.2s;
-            white-space: nowrap;
-        }
-
-        .btn-theme:hover {
-            background: #00e5ff;
-            color: #1e1e24;
-        }
-
-        @media (max-width: 768px) {
-            .header-box {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 15px;
-            }
-            .nav-menu {
-                width: 100%;
-                justify-content: flex-start;
-            }
-            /* Menjaga ukuran teks judul agar tidak meluap di HP */
-            .card-title {
-                font-size: 13px;
-            }
-            
-            .banner-slider {
-    width: 100%;
-    overflow: hidden;
-    margin-bottom: 20px;
-    border-radius: 10px;
-    height: 200px; /* Kalau ini tidak ada, banner jadi tidak kelihatan */
-    background-color: transparent;
-}
-
-.banner-slider img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: none;
-}
-
-.banner-slider a {
-    display: block;
-    width: 100%;
-    height: 100%;
-}
-
-        }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg-body); color: var(--text-main); margin: 0; padding: 10px; transition: background-color 0.3s, color 0.3s; }
+        .container { max-width: 1000px; margin: 0 auto; background: var(--bg-container); border-radius: 12px; box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); padding: 18px; border-top: 5px solid #00e5ff; }
+        .header-box { display: flex; align-items: center; justify-content: space-between; gap: 20px; margin-bottom: 30px; border-bottom: 2px solid var(--border-card); padding-bottom: 15px; }
+        h2 { color: #00e5ff; margin: 0; font-size: clamp(16px, 4vw, 24px); text-transform: uppercase; }
+        .nav-menu { display: flex; align-items: center; gap: 12px; }
+        .nav-item { cursor: pointer; padding: 6px 14px; border-radius: 20px; background: transparent; border: 1px solid transparent; }
+        .nav-item.active { border-color: #00e5ff; color: #00e5ff; background: var(--bg-card); }
+        .search-container { margin-bottom: 25px; }
+        .search-box { width: 100%; padding: 12px 20px; border: 1px solid var(--border-card); border-radius: 8px; background-color: var(--bg-search); color: var(--text-main); }
+        .card-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px 12px; }
+        .id-card { width: 100%; padding-top: 100%; position: relative; background: var(--bg-card); border-radius: 8px; overflow: hidden; }
+        .id-card img { position: absolute; top:0; left:0; width: 100%; height: 100%; object-fit: cover; }
+        
+        /* Banner Statis */
+        .banner-slider { width: 100%; height: 200px; margin-bottom: 20px; border-radius: 10px; overflow: hidden; }
+        .banner-slider img { width: 100%; height: 100%; object-fit: cover; display: block; }
     </style>
 </head>
 <body>
@@ -257,114 +64,66 @@
         <div class="card-grid" id="gridKartun"></div>
     </div>
 
-        <script>
-    const URL_CSV_KARTUN = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRgIbfZERZ-9WhUrdYdNdJ2_8qNsyC0OHNnKt9NSn8m9GVuQhvgMovQOUPtSd_6Fetus0adAxUu6G4O/pub?gid=0&single=true&output=csv";
-    var kategoriSemasa = "semua";
+    <script>
+        const URL_CSV_KARTUN = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRgIbfZERZ-9WhUrdYdNdJ2_8qNsyC0OHNnKt9NSn8m9GVuQhvgMovQOUPtSd_6Fetus0adAxUu6G4O/pub?gid=0&single=true&output=csv";
+        var kategoriSemasa = "semua";
 
-    window.onload = function() {
-        fetch(URL_CSV_KARTUN)
-        .then(response => response.text())
-        .then(data => parsedataCSV(data))
-        .catch(err => console.error("Gagal memuat data: ", err));
-    };
-
-    function parsedataCSV(text) {
-    let baris = text.split("\n");
-    let sliderBanner = document.getElementById('sliderBanner');
-    let grid = document.getElementById('gridKartun');
-
-    if(sliderBanner) sliderBanner.innerHTML = "";
-    if(grid) grid.innerHTML = "";
-
-    // Ambil baris pertama saja untuk banner
-    let bannerDitemukan = false;
-
-    for(let i = 1; i < baris.length; i++) {
-        if(baris[i].trim() === "") continue;
-        let kolom = baris[i].split(",");
-        
-        let data = {
-            judul: kolom[0].trim(),
-            tipe: kolom[1].trim().toLowerCase(),
-            gambar: kolom[2].trim(),
-            linkKartun: kolom[3].trim(),
-            bannerUtama: kolom[4] ? kolom[4].trim() : ""
+        window.onload = function() {
+            fetch(URL_CSV_KARTUN)
+            .then(response => response.text())
+            .then(data => parsedataCSV(data))
+            .catch(err => console.error("Gagal: ", err));
         };
 
-        // Jika ketemu data banner pertama, tampilkan dan tandai
-        if (!bannerDitemukan && data.bannerUtama !== "") {
-            sliderBanner.innerHTML = `
-                <a href="tonton.html?kartun=${data.linkKartun}">
-                    <img src="${data.bannerUtama}" alt="Banner Utama">
-                </a>`;
-            bannerDitemukan = true;
+        function parsedataCSV(text) {
+            let baris = text.split("\n");
+            let sliderBanner = document.getElementById('sliderBanner');
+            let grid = document.getElementById('gridKartun');
+            if(sliderBanner) sliderBanner.innerHTML = "";
+            if(grid) grid.innerHTML = "";
+
+            let bannerSudahDimuat = false;
+
+            for(let i = 1; i < baris.length; i++) {
+                if(baris[i].trim() === "") continue;
+                let kolom = baris[i].split(",");
+                let data = { judul: kolom[0].trim(), tipe: kolom[1].trim().toLowerCase(), gambar: kolom[2].trim(), linkKartun: kolom[3].trim(), bannerUtama: kolom[4] ? kolom[4].trim() : "" };
+
+                if (!bannerSudahDimuat && data.bannerUtama !== "") {
+                    sliderBanner.innerHTML = `<a href="tonton.html?kartun=${data.linkKartun}"><img src="${data.bannerUtama}" alt="Banner"></a>`;
+                    bannerSudahDimuat = true;
+                }
+
+                if(grid) {
+                    grid.innerHTML += `<a href="tonton.html?kartun=${data.linkKartun}" class="movie-item" data-type="${data.tipe}">
+                        <div class="id-card"><img src="${data.gambar}" alt="${data.judul}"></div>
+                        <p class="card-title">${data.judul}</p>
+                        <span class="card-type">${data.tipe}</span>
+                    </a>`;
+                }
+            }
         }
 
-        // Grid Kartun
-        if(grid) {
-            grid.innerHTML += `
-            <a href="tonton.html?kartun=${data.linkKartun}" class="movie-item" data-type="${data.tipe}">
-                <div class="id-card"><img src="${data.gambar}" alt="${data.judul}"></div>
-                <p class="card-title">${data.judul}</p>
-                <span class="card-type">${data.tipe}</span>
-            </a>`;
+        function tukarKategori(kat, el) {
+            document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+            el.classList.add('active');
+            kategoriSemasa = kat;
+            jalankanPenyaringan();
         }
-    }
-}
-        
-        daftarBanner.sort((a, b) => a.urutan - b.urutan);
 
-        daftarBanner.forEach(b => {
-            sliderBanner.innerHTML += `
-                <a href="tonton.html?kartun=${b.linkKartun}">
-                    <img src="${b.bannerUtama}" alt="${b.judul}" style="display:none; width:100%; height:200px; object-fit:cover;">
-                </a>`;
-        });
-        
-        if(sliderBanner && sliderBanner.children.length > 0) {
-            tampilkanBanner(); 
+        function jalankanPenyaringan() {
+            let f = document.getElementById('cariKartun').value.toLowerCase();
+            document.querySelectorAll('.movie-item').forEach(item => {
+                let title = item.querySelector('.card-title').textContent.toLowerCase();
+                let type = item.getAttribute('data-type');
+                item.style.display = (title.includes(f) && (kategoriSemasa === "semua" || type === kategoriSemasa)) ? "" : "none";
+            });
         }
-    }
 
-    function tukarKategori(kategori, elemen) {
-        document.querySelectorAll('.nav-item').forEach(btn => btn.classList.remove('active'));
-        elemen.classList.add('active');
-        kategoriSemasa = kategori;
-        jalankanPenyaringan();
-    }
-
-    function jalankanPenyaringan() {
-        let filter = document.getElementById('cariKartun').value.toLowerCase();
-        let items = document.getElementsByClassName('movie-item');
-        for (let item of items) {
-            let title = item.querySelector('.card-title').textContent.toLowerCase();
-            let type = item.getAttribute('data-type');
-            let matchText = title.includes(filter);
-            let matchCat = (kategoriSemasa === "semua" || type === kategoriSemasa);
-            item.style.display = (matchText && matchCat) ? "" : "none";
+        function tukarTema() {
+            document.body.classList.toggle('dark-mode');
+            document.getElementById('temaBtn').innerText = document.body.classList.contains('dark-mode') ? "Mod Terang" : "Mod Gelap";
         }
-    }
-
-    function tukarTema() {
-        document.body.classList.toggle('dark-mode');
-        document.getElementById('temaBtn').innerText = document.body.classList.contains('dark-mode') ? "Mod Terang" : "Mod Gelap";
-    }
-
-    let slideIndex = 0;
-    function tampilkanBanner() {
-        let container = document.getElementById('sliderBanner');
-        let slides = container.getElementsByTagName("img");
-        
-        if(slides.length === 0) return;
-        
-        for (let i = 0; i < slides.length; i++) {
-            slides[i].style.display = "none";
-        }
-        
-        slideIndex++;
-        if (slideIndex > slides.length) { slideIndex = 1; }
-        slides[slideIndex - 1].style.display = "block";
-        
-        setTimeout(tampilkanBanner, 3000);
-    }
-</script>
+    </script>
+</body>
+</html>
