@@ -260,7 +260,7 @@
 
     <div class="container">
         
-               <div id="halaman-senarai">
+                   <div id="halaman-senarai">
         <div class="header-box">
             <h2>
                 <button class="btn-close" onclick="window.history.back()">✕</button>
@@ -268,33 +268,31 @@
             </h2>
             <button class="btn-theme" id="temaBtn-list">Mode Gelap</button>
         </div>
-
         <img id="banner-kartun" src="" alt="Banner">
         <div class="list-view" id="boxSenaraiEpisode"></div>
     </div>
 
-    <div id="halaman-nonton">
-    <div class="header-box">
-        <h2>
-            <button class="btn-close" onclick="tutupHalamanNonton()">✕</button>
-            <span id="judul-halaman-nonton">LOADING...</span>
-        </h2>
-        <button class="btn-theme" id="temaBtn-nonton">Mode Gelap</button>
-    </div>
-    
-    <div class="video-box">
-        <iframe id="frame-video" src="" allowfullscreen></iframe>
-    </div>
-    </div>
+    <div id="halaman-nonton" style="display:none;">
+        <div class="header-box">
+            <h2>
+                <button class="btn-close" onclick="tutupHalamanNonton()">✕</button>
+                <span id="judul-halaman-nonton">LOADING...</span>
+            </h2>
+            <button class="btn-theme" id="temaBtn-nonton">Mode Gelap</button>
+        </div>
 
-            <p class="video-title" id="tajuk-video"></p>
-
-            <div class="video-note">Note: Kalau mau layar penuh bisa landscape. Aktifkan mode putar otomatis atau rotasi otomatis layar HP.</div>
-
-            <div class="donation-box">
-                <div class="donation-title">Dukung Nonton Kartun via QRIS Donasi</div>
-                <img src="https://i.ibb.co.com/YBp6WJv3/qris.jpg" alt="QRIS Donasi" class="donation-qr">
-            </div>
+        <div class="video-box">
+            <iframe id="frame-video" src="" allowfullscreen></iframe>
+        </div>
+        
+        <p class="video-title" id="tajuk-video"></p>
+        <div class="video-note">Note: Kalau mau layar penuh bisa landscape...</div>
+        
+        <div class="donation-box">
+            <div class="donation-title">Dukung Nonton Kartun via QRIS Donasi</div>
+            <img src="https://i.ibb.co.com/YBp6WJv3.jpg" alt="QRIS">
+        </div>
+    </div>
 
     <script>
     function tutupHalamanNonton() {
