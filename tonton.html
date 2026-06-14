@@ -260,32 +260,33 @@
 
     <div class="container">
         
-       <div id="halaman-senarai">
+               <div id="halaman-senarai">
+        <div class="header-box">
+            <h2>
+                <button class="btn-close" onclick="window.history.back()">✕</button>
+                <span id="judul-halaman-list">LOADING...</span>
+            </h2>
+            <button class="btn-theme" id="temaBtn-list">Mode Gelap</button>
+        </div>
+
+        <img id="banner-kartun" src="" alt="Banner">
+        <div class="list-view" id="boxSenaraiEpisode"></div>
+    </div>
+
+    <div id="halaman-nonton">
     <div class="header-box">
-    <h2>
-        <button class="btn-close" onclick="window.history.back()">✕</button>
-        <span id="judul-halaman-list">LOADING...</span>
-    </h2>
-    <button class="btn-theme" id="temaBtn-list">Mode Gelap</button>
-</div>
+        <h2>
+            <button class="btn-close" onclick="tutupHalamanNonton()">✕</button>
+            <span id="judul-halaman-nonton">LOADING...</span>
+        </h2>
+        <button class="btn-theme" id="temaBtn-nonton">Mode Gelap</button>
+    </div>
+    
+    <div class="video-box">
+        <iframe id="frame-video" src="" allowfullscreen></iframe>
+    </div>
+    </div>
 
-    <img id="banner-kartun" src="" alt="Banner">
-
-    <div class="list-view" id="boxSenaraiEpisode"></div>
-</div>
-
-        <div id="halaman-nonton">
-            <<div class="header-box">
-    <h2>
-        <button class="btn-close" onclick="window.history.back()">✕</button>
-        <span id="judul-halaman-nonton">LOADING...</span>
-    </h2>
-    <button class="btn-theme" id="temaBtn-nonton">Mode Gelap</button>
-</div>
-            
-            <div class="video-box">
-                <iframe id="frame-video" src="" allowfullscreen></iframe>
-            </div>
             <p class="video-title" id="tajuk-video"></p>
 
             <div class="video-note">Note: Kalau mau layar penuh bisa landscape. Aktifkan mode putar otomatis atau rotasi otomatis layar HP.</div>
@@ -294,11 +295,15 @@
                 <div class="donation-title">Dukung Nonton Kartun via QRIS Donasi</div>
                 <img src="https://i.ibb.co.com/YBp6WJv3/qris.jpg" alt="QRIS Donasi" class="donation-qr">
             </div>
-        </div>
-
-    </div>
 
     <script>
+    function tutupHalamanNonton() {
+        // Sembunyikan halaman nonton
+        document.getElementById('halaman-nonton').style.display = 'none';
+        // Tampilkan kembali halaman senarai
+        document.getElementById('halaman-senarai').style.display = 'block';
+    }
+    
         const URL_CSV_EPISODES = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRgIbfZERZ-9WhUrdYdNdJ2_8qNsyC0OHNnKt9NSn8m9GVuQhvgMovQOUPtSd_6Fetus0adAxUu6G4O/pub?gid=1389944860&single=true&output=csv";
         const URL_CSV_KARTUN = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRgIbfZERZ-9WhUrdYdNdJ2_8qNsyC0OHNnKt9NSn8m9GVuQhvgMovQOUPtSd_6Fetus0adAxUu6G4O/pub?gid=0&output=csv";
 
